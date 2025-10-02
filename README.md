@@ -29,8 +29,8 @@ Raise3D E2 All-In-One Klipper
 
 ### Raise3D E2 Requirement:
 - 16GB-32GB SD CARD SDHC (preferencly 32 GB)
-- Tools
-- 
+- All necessary tools
+- Understand the risk of: lost of wanrandy and no Raise3D support
 
 #### Installation:
 ```
