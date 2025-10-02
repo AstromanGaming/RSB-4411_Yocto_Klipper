@@ -3,7 +3,7 @@ Raise3D E2 All-In-One Klipper
 
 ### PC Minimun Requirement:
 - CPU: Quad-core (4 cores) processor (or higher very recommended for better compile performance)
-- Memory: 32GB RAM (or higher recommended for better task performance)
+- Memory: 16GB RAM (or higher recommended for better task performance)
 - Disk Space: 500GB-1TB (SSD is suggested for better performance)
 - OS: Ubuntu 22.04.X LTS (Linux Distro with Ubuntu 22.04.X LTS with base it's okay, but not recommended.)
 - GPU*: N/A (if you're don't use GUI)
