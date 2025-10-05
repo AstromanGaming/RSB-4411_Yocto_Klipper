@@ -5,7 +5,7 @@ read -p "Enter build sub-directory name [build_X]: " BUILD_DIR
 
 # Check if input is empty
 if [ -z "$BUILD_DIR" ]; then
-  echo "❌ Build directory name is required. Exiting."
+  echo "Build directory name is required. Exiting."
   exit 1
 fi
 
