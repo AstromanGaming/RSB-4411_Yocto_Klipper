@@ -63,7 +63,7 @@ repo sync
 ```
 cd ..
 git clone https://github.com/AstromanGaming/RSB-4411_Yocto_Klipper.git
-cd ./RSB-4411_Yocto_Klipper/script/
+cd ./RSB-4411_Yocto_Klipper/script/imx6LBVD0029
 ```
 
 #### For the main build:
