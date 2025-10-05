@@ -1,0 +1,1 @@
+cd ~/RSB-4411_Yocto_Klipper && MACHINE=imx6qrsb4411a1 UBOOT_CONFIG=1G DISTRO=fsl-imx-xwayland source imx-setup-release.sh -b build_KlipperScreen && bash ~/RSB-4411_Yocto_Klipper/script/imx6LBVD0029/local_KlipperScreen.sh && bash ~/RSB-4411_Yocto_Klipper/script/imx6LBVD0029/bblayers_KlipperScreen.sh && exec bash
