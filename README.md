@@ -16,7 +16,7 @@ Raise3D E2 All-In-One Klipper
 - Memory: 64GB RAM
 - Disk Space: 1TB+ (SSD is suggested for better performance)
 - OS: Ubuntu 22.04.X LTS (Linux Distro with Ubuntu 22.04.X LTS with base it's okay)
-- GPU*: Intergretate Graphics (iGPU)/APU processor (dGPU/eGPU is very optional and have no benerfic for this project)
+- GPU*: Intergretate Graphics (iGPU)/APU processor (dGPU/eGPU is very optional and have no benefic for this project)
 
 *Alacritty or similar is mandatory for the Hardware Acceleration
 
