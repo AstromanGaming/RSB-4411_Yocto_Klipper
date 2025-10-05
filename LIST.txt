@@ -1,0 +1,10 @@
+# build
+bitbake imx-image-core
+bitbake imx-image-multimedia
+bitbake imx-image-full
+
+# build_extra
+
+# build_cage
+
+# build_KlipperScreen
