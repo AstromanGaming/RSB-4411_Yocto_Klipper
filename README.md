@@ -1,5 +1,8 @@
 # RSB-4411_Yocto_Klipper
-Raise3D E2 All-In-One Klipper (W.I.P.)
+
+## Warning: Not finish and WIP!
+
+Raise3D E2 All-In-One Klipper
 
 ### PC Minimun Requirement:
 - CPU: Quad-core (4 cores) processor (or higher very recommended for better compile performance)
