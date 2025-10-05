@@ -63,12 +63,12 @@ repo sync
 ```
 cd ..
 git clone https://github.com/AstromanGaming/RSB-4411_Yocto_Klipper.git
-cd ./RSB-4411_Yocto_Klipper
+cd ./RSB-4411_Yocto_Klipper/script/
 ```
 
 #### For the main build:
 ```
-./imx6LBVD0029.sh
+./main.sh
 ```
 
 #### Sources:
