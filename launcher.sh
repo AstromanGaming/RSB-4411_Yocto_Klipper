@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Set working directory to imx6LBVD0029
+cd ~/RSB-4411_Yocto_Klipper/script/imx6LBVD0029 || {
+  echo "Could not enter imx6LBVD0029 directory."
+  exit 1
+}
+
+# Collect all .sh files from main and Custom/, excluding local_* and bblayers_*
+echo "Available launchable scripts:"
+find . -type f -name "*.sh" \
+  ! -name "local_*.sh" \
+  ! -name "bblayers_*.sh" \
+  -exec basename {} \;
+
+# Prompt user to choose one
+read -p "Enter the name of the script to launch: " SCRIPT_NAME
+
+# Search for the selected script in both locations
+SCRIPT_PATH=$(find . -type f -name "$SCRIPT_NAME" | head -n 1)
+
+# Validate and launch
+if [ -f "$SCRIPT_PATH" ]; then
+  chmod +x "$SCRIPT_PATH"
+  echo "Launching $SCRIPT_NAME..."
+  bash "$SCRIPT_PATH"
+else
+  echo "Script '$SCRIPT_NAME' not found."
+  exit 1
+fi
+
