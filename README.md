@@ -1,6 +1,6 @@
 # RSB-4411_Yocto_Klipper
 
-## Warning: Not finish and WIP!
+## Warning: It's not finish and it's WIP!
 
 Raise3D E2 All-In-One Klipper
 
