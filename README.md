@@ -20,16 +20,6 @@ Raise3D E2 All-In-One Klipper
 
 *Alacritty or similar is mandatory for the Hardware Acceleration
 
-### Packages Server Minimun Requirement:
-- CPU: Dual-core (2 cores) processor (or higher recommended for better performance)
-- Memory: 16GB RAM (or higher recommended for better performance)
-- Disk Space: 250GB (SSD is suggested for better performance)
-
-### Packages Server Recommended Requirement:
-- CPU: Quad-core (4 cores) processor (or higher recommended for better performance)
-- Memory: 16GB RAM (or higher recommended for better performance)
-- Disk Space: 500GB (SSD is suggested for better performance)
-
 ### Raise3D E2 Requirement:
 - 16GB-32GB SD CARD SDHC (preferencly 32 GB)
 - All necessary tools
