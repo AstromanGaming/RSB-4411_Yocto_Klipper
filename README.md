@@ -69,6 +69,7 @@ cd ./RSB-4411_Yocto_Klipper/script/imx6LBVD0029
 #### For the main build:
 ```
 ./main.sh
+bitbake imx-image-core
 ```
 
 #### Sources:
