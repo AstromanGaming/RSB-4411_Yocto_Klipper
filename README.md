@@ -20,37 +20,8 @@
 
 #### Installation:
 ```
-sudo apt update
-sudo apt install git curl
-```
-
-```
-git config --global user.name "Your Name"
-git config --global user.email you@example.com
-```
-
-```
-mkdir ~/bin
-curl http://commondatastorage.googleapis.com/git-repo-downloads/repo  > ~/bin/repo
-chmod a+x ~/bin/repo
-PATH=${PATH}:~/bin
-```
-
-```
-mkdir ./YoctianOS-Distro
-cd ./YoctianOS-Distro
-repo init -u https://github.com/ADVANTECH-Corp/adv-arm-yocto-bsp.git -b imx-linux-mickledore -m imx6LBVD0029.xml
-repo sync
-```
-
-```
-cd ..
-git clone https://github.com/YoctianOS/YoctianOS-Distro.git
-cd ./YoctianOS-Distro/script/imx6LBVD0029
 ```
 
 #### For the main build:
 ```
-./main.sh
-bitbake imx-image-core
 ```
