@@ -1,8 +1,6 @@
-# RSB-4411_Yocto_Klipper
+# YoctianOS for RSB-4411
 
 ## Warning: It's not finish and it's WIP!
-
-Raise3D E2 All-In-One Klipper
 
 ### PC Minimun Requirement:
 - CPU: Quad-core (4 cores) processor (or higher very recommended for better compile performance)
@@ -20,10 +18,9 @@ Raise3D E2 All-In-One Klipper
 
 *Alacritty or similar is mandatory for the Hardware Acceleration
 
-### Raise3D E2 Requirement:
+### RSB-4411 Requirement:
 - 16GB-32GB SD CARD SDHC (preferencly 32 GB)
 - All necessary tools
-- Understand the risk of: lost of warrandy and no Raise3D support
 
 #### Installation:
 ```
@@ -44,16 +41,16 @@ PATH=${PATH}:~/bin
 ```
 
 ```
-mkdir ./RSB-4411_Yocto_Klipper
-cd ./RSB-4411_Yocto_Klipper
+mkdir ./YoctianOS-Distro
+cd ./YoctianOS-Distro
 repo init -u https://github.com/ADVANTECH-Corp/adv-arm-yocto-bsp.git -b imx-linux-mickledore -m imx6LBVD0029.xml
 repo sync
 ```
 
 ```
 cd ..
-git clone https://github.com/AstromanGaming/RSB-4411_Yocto_Klipper.git
-cd ./RSB-4411_Yocto_Klipper/script/imx6LBVD0029
+git clone https://github.com/AstromanGaming/YoctianOS-Distro.git
+cd ./YoctianOS-Distro/script/imx6LBVD0029
 ```
 
 #### For the main build:
