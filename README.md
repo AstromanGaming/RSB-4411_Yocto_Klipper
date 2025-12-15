@@ -18,10 +18,6 @@
 
 *Alacritty or similar is mandatory for the Hardware Acceleration
 
-### RSB-4411 Requirement:
-- 16GB-32GB SD CARD SDHC (preferencly 32 GB)
-- All necessary tools
-
 #### Installation:
 ```
 sudo apt update
