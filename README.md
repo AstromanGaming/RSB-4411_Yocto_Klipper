@@ -49,7 +49,7 @@ repo sync
 
 ```
 cd ..
-git clone https://github.com/AstromanGaming/YoctianOS-Distro.git
+git clone https://github.com/YoctianOS/YoctianOS-Distro.git
 cd ./YoctianOS-Distro/script/imx6LBVD0029
 ```
 
