@@ -54,7 +54,3 @@ cd ./YoctianOS-Distro/script/imx6LBVD0029
 ./main.sh
 bitbake imx-image-core
 ```
-
-#### Sources:
-- https://github.com/ADVANTECH-Corp/adv-arm-yocto-bsp/tree/imx6LBVD0029
-- https://ess-wiki.advantech.com.tw/view/IoTGateway/BSP/Linux/iMX6/Yocto_LBVD_User_Guide
