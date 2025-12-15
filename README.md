@@ -2,7 +2,7 @@
 
 ## Warning: It's not finish and it's WIP!
 
-### PC Minimun Requirement:
+### PC Minimum Requirement:
 - CPU: Quad-core (4 cores) processor (or higher very recommended for better compile performance)
 - Memory: 16GB RAM (or higher recommended for better task performance)
 - Disk Space: 500GB-1TB (SSD is suggested for better performance)
