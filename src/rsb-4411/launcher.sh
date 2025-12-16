@@ -6,7 +6,7 @@ cd ~/YoctianOS-Distro/script/rsb-4411 || {
   exit 1
 }
 
-# Collect all .sh files from main and Custom/, excluding local_* and bblayers_*
+# Collect all .sh files from default and User/, excluding local_* and bblayers_*
 echo "Available launchable scripts:"
 find . -type f -name "*.sh" \
   ! -name "local_*.sh" \
