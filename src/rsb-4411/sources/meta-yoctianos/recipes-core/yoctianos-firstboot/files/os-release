@@ -1,0 +1,5 @@
+NAME="YoctianOS DEV"
+VERSION="DEV"
+ID=yoctianos
+PRETTY_NAME="YoctianOS DEV"
+HOME_URL="https://github.com/YoctianOS"

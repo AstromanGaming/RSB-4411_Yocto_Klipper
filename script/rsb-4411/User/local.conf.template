@@ -1,5 +1,5 @@
 MACHINE ??= 'imx6qrsb4411a1'
-DISTRO ?= 'fsl-imx-xwayland'
+DISTRO ?= 'fsl-imx-x11'
 UBOOT_CONFIG ?= '1G'
 EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
 USER_CLASSES ?= "buildstats"
@@ -22,3 +22,15 @@ ACCEPT_FSL_EULA = "1"
 ## YoctianOS
 PACKAGE_CLASSES = "package_deb"
 EXTRA_IMAGE_FEATURES += " package-management "
+
+IMAGE_NAME = "YoctianOS-DEV-image"
+
+IMAGE_INSTALL:append = " \
+    yoctianos-firstboot \
+    apt apt-utils \
+    sudo \
+    systemd \
+    systemd-firstboot \
+"
+
+VIRTUAL-RUNTIME_init = "systemd"

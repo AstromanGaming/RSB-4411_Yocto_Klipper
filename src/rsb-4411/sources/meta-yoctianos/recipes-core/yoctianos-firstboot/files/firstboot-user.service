@@ -1,0 +1,13 @@
+[Unit]
+Description=YoctianOS first boot user setup
+ConditionFirstBoot=yes
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/firstboot-user.sh
+StandardInput=tty
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
