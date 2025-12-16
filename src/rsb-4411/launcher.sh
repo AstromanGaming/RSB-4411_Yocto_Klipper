@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Set working directory to imx6LBVD0029
-cd ~/RSB-4411_Yocto_Klipper/script/imx6LBVD0029 || {
-  echo "Could not enter imx6LBVD0029 directory."
+# Set working directory to RSB-4411
+cd ~/YoctianOS-Distro/script/rsb-4411 || {
+  echo "Could not enter RSB-4411 directory."
   exit 1
 }
 
@@ -28,4 +28,3 @@ else
   echo "Script '$SCRIPT_NAME' not found."
   exit 1
 fi
-
