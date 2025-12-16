@@ -1,9 +1,15 @@
 #!/bin/bash
 set -e  # Stop the script if any command fails
 
-# Ask the user for their Git name and email
-read -p "Enter your Git name: " GIT_NAME
-read -p "Enter your Git email: " GIT_EMAIL
+# Ask the user for their GitHub name and email
+read -p "Enter your GitHub name: " GIT_NAME
+read -p "Enter your GitHub email: " GIT_EMAIL
+
+# Check if either value is empty
+if [[ -z "$GIT_NAME" || -z "$GIT_EMAIL" ]]; then
+  echo "Error: GitHub name and email must not be empty."
+  exit 1
+fi
 
 # Update packages
 sudo apt update
