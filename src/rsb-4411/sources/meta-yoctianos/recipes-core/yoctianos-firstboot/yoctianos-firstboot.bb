@@ -11,7 +11,7 @@ SRC_URI = "file://firstboot-user.sh \
 
 S = "${WORKDIR}"
 
-# Replace the md5 below with the md5sum of files/LICENSE
+# Replace the md5 below with the md5sum of files/LICENSE if needed
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 do_install() {
@@ -36,13 +36,13 @@ do_install() {
     install -m 0644 ${WORKDIR}/LICENSE ${D}${WORKDIR}/LICENSE
 }
 
-FILES_${PN} += "/usr/local/sbin/firstboot-user.sh ${sysconfdir}/systemd/system/firstboot-user.service ${sysconfdir}/os-release ${sysconfdir}/hostname ${sysconfdir}/issue ${sysconfdir}/hosts ${sysconfdir}/motd"
+FILES:${PN} += "/usr/local/sbin/firstboot-user.sh ${sysconfdir}/systemd/system/firstboot-user.service ${sysconfdir}/os-release ${sysconfdir}/hostname ${sysconfdir}/issue ${sysconfdir}/hosts ${sysconfdir}/motd"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "firstboot-user.service"
 
 # Enable sshd at image creation if the sshd unit exists in the rootfs
-do_install_append() {
+do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
     if [ -f ${D}/lib/systemd/system/sshd.service ]; then
         ln -sf /lib/systemd/system/sshd.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/sshd.service || true
