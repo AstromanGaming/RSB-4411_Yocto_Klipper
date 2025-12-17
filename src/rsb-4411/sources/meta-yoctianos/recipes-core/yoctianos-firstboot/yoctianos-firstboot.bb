@@ -30,13 +30,15 @@ do_install() {
     install -m 0644 ${WORKDIR}/issue ${D}${sysconfdir}/issue
     install -m 0644 ${WORKDIR}/hosts ${D}${sysconfdir}/hosts
     install -m 0644 ${WORKDIR}/motd ${D}${sysconfdir}/motd
-
-    # install license
-    install -d ${D}${WORKDIR}
-    install -m 0644 ${WORKDIR}/LICENSE ${D}${WORKDIR}/LICENSE
 }
 
-FILES:${PN} += "/usr/local/sbin/firstboot-user.sh ${sysconfdir}/systemd/system/firstboot-user.service ${sysconfdir}/os-release ${sysconfdir}/hostname ${sysconfdir}/issue ${sysconfdir}/hosts ${sysconfdir}/motd"
+FILES:${PN} += "/usr/local/sbin/firstboot-user.sh \
+                ${sysconfdir}/systemd/system/firstboot-user.service \
+                ${sysconfdir}/os-release \
+                ${sysconfdir}/hostname \
+                ${sysconfdir}/issue \
+                ${sysconfdir}/hosts \
+                ${sysconfdir}/motd"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "firstboot-user.service"
