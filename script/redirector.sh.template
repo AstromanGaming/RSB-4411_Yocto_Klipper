@@ -67,18 +67,31 @@ while true; do
             echo "a) $CORE_IMAGE"
             echo "b) $MULTIMEDIA_IMAGE"
             echo "c) $FULL_IMAGE"
-            echo "d) All three"
-            read -p "Enter choice [a-d]: " subchoice
+            echo "d) Recommended ($CORE_IMAGE + $MULTIMEDIA_IMAGE)"
+            echo "e) Complete ($CORE_IMAGE + $MULTIMEDIA_IMAGE + $FULL_IMAGE)"
+            read -p "Enter choice [a-e]: " subchoice
             case $subchoice in
-                a) bitbake $CORE_IMAGE ;;
-                b) bitbake $MULTIMEDIA_IMAGE ;;
-                c) bitbake $FULL_IMAGE ;;
+                a)
+                    bitbake $CORE_IMAGE
+                    ;;
+                b)
+                    bitbake $MULTIMEDIA_IMAGE
+                    ;;
+                c)
+                    bitbake $FULL_IMAGE
+                    ;;
                 d)
+                    bitbake $CORE_IMAGE
+                    bitbake $MULTIMEDIA_IMAGE
+                    ;;
+                e)
                     bitbake $CORE_IMAGE
                     bitbake $MULTIMEDIA_IMAGE
                     bitbake $FULL_IMAGE
                     ;;
-                *) echo "Invalid choice." ;;
+                *)
+                    echo "Invalid choice."
+                    ;;
             esac
             ;;
         2)
