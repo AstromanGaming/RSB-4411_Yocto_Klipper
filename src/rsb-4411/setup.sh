@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e  # Stop the script if any command fails
 
 # Ask the user for their GitHub name and email

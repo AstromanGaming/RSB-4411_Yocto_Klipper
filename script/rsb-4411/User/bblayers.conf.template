@@ -35,8 +35,19 @@ BBLAYERS += "${BSPDIR}/sources/meta-qt6"
 BBLAYERS += "${BSPDIR}/sources/meta-security/meta-parsec"
 BBLAYERS += "${BSPDIR}/sources/meta-security/meta-tpm"
 BBLAYERS += "${BSPDIR}/sources/meta-virtualization"
-BBLAYERS += "${BSPDIR}/sources/meta-advantech/meta-fsl-imx "
-BBLAYERS += "${BSPDIR}/sources/meta-advantech/meta-tools "
+BBLAYERS += "${BSPDIR}/sources/meta-advantech/meta-fsl-imx"
+BBLAYERS += "${BSPDIR}/sources/meta-advantech/meta-tools"
 
 ## YoctianOS
 BBLAYERS += "${BSPDIR}/sources/meta-yoctianos"
+
+BBFILES += "${BSPDIR}/sources/meta-yoctianos/recipes-*/*/*.bb \
+            ${BSPDIR}/sources/meta-yoctianos/recipes-*/*/*.bbappend"
+
+BBLAYERS += "${BSPDIR}/sources/meta-yoctianos-advantech"
+
+BBFILES += "${BSPDIR}/sources/meta-yoctianos-advantech/recipes-*/*/*.bb \
+            ${BSPDIR}/sources/meta-yoctianos-advantech/recipes-*/*/*.bbappend"
+
+## User
+

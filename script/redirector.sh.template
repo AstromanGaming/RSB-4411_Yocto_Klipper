@@ -1,0 +1,98 @@
+#!/bin/sh
+
+set -e
+
+# Check if bitbake is available
+if ! command -v bitbake >/dev/null 2>&1; then
+    echo "Error: bitbake is not installed or not found in PATH."
+    exit 1
+fi
+
+# Fixed images
+CORE_IMAGE="imx-image-core"
+MULTIMEDIA_IMAGE="imx-image-multimedia"
+FULL_IMAGE="imx-image-full"
+
+# Load saved memory packages if exists
+MEMORY_FILE="memory.conf"
+if [ -f "$MEMORY_FILE" ]; then
+    . "$MEMORY_FILE"
+fi
+
+# Function to run bitbake with memory packages
+run_bitbake_with_memory() {
+    if [ -z "$MEMORY_PACKAGES" ]; then
+        echo "No memory packages defined. Please configure them first."
+        return
+    fi
+    echo "Running bitbake with memory packages: $MEMORY_PACKAGES"
+    bitbake $MEMORY_PACKAGES
+}
+
+# Submenu to set memory packages
+set_memory_menu() {
+    echo "Memory packages submenu:"
+    echo "1) Set package list (current: ${MEMORY_PACKAGES:-none})"
+    echo "2) Back to main menu"
+
+    read -p "Enter choice [1-2]: " memchoice
+    case $memchoice in
+        1)
+            read -p "Enter package names (space-separated): " newpkgs
+            MEMORY_PACKAGES="$newpkgs"
+            echo "MEMORY_PACKAGES=\"$MEMORY_PACKAGES\"" > "$MEMORY_FILE"
+            echo "Saved memory packages for future runs."
+            ;;
+        2)
+            return
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+# Main menu loop
+while true; do
+    echo "Main Menu:"
+    echo "1) Build images"
+    echo "2) Build memory packages"
+    echo "3) Configure memory packages (submenu)"
+    echo "4) Exit"
+
+    read -p "Enter choice [1-4]: " choice
+    case $choice in
+        1)
+            echo "Select image(s) to build:"
+            echo "a) $CORE_IMAGE"
+            echo "b) $MULTIMEDIA_IMAGE"
+            echo "c) $FULL_IMAGE"
+            echo "d) All three"
+            read -p "Enter choice [a-d]: " subchoice
+            case $subchoice in
+                a) bitbake $CORE_IMAGE ;;
+                b) bitbake $MULTIMEDIA_IMAGE ;;
+                c) bitbake $FULL_IMAGE ;;
+                d)
+                    bitbake $CORE_IMAGE
+                    bitbake $MULTIMEDIA_IMAGE
+                    bitbake $FULL_IMAGE
+                    ;;
+                *) echo "Invalid choice." ;;
+            esac
+            ;;
+        2)
+            run_bitbake_with_memory
+            ;;
+        3)
+            set_memory_menu
+            ;;
+        4)
+            echo "Exiting."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+done
