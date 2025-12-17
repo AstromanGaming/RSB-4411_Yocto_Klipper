@@ -1,5 +1,2 @@
-# Remove the obsolete dependency
-RDEPENDS:${PN} = "${@oe_filter_out('xserver-xorg-extension-viv-autohdmi', d.getVar('RDEPENDS:${PN}'))}"
-
-# Add modern GPU packages instead
-RDEPENDS:${PN} += "imx-gpu-viv imx-gpu-viv-demos"
+# Override RDEPENDS to drop obsolete viv-autohdmi and add modern GPU packages
+RDEPENDS:${PN} = "imx-gpu-viv imx-gpu-viv-demos imx-gpu-sdk imx-gpu-viv-tools imx-gpu-apitrace"
