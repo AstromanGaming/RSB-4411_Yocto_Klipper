@@ -1,7 +1,10 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+#FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI:append:imxgpu = " \
-    file://0001-glamor-Fix-fbo-pixmap-format-with-GL_BGRA_EXT.patch \
-"
+#SRC_URI:append:imxgpu = " \
+#    file://0001-glamor-Fix-fbo-pixmap-format-with-GL_BGRA_EXT.patch \
+#"
+
+# Remove the original NXP glamor patch
+SRC_URI:remove = "file://0001-glamor-Fix-fbo-pixmap-format-with-GL_BGRA_EXT.patch"
 
 PACKAGECONFIG:remove = "glx"
