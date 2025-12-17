@@ -11,6 +11,7 @@ echo "Available launchable scripts:"
 find . -type f -name "*.sh" \
   ! -name "local_*.sh" \
   ! -name "bblayers_*.sh" \
+  ! -name "redirector_*.sh" \
   -exec basename {} \;
 
 # Prompt user to choose one
