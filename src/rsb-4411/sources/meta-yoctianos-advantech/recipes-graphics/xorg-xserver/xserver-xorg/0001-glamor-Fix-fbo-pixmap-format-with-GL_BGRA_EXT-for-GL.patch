@@ -1,0 +1,27 @@
+From dc165c68022de689963f8a2fd5c3f0bceed55329 Mon Sep 17 00:00:00 2001
+Date: Wed, 17 Dec 2025 14:53:52 -0500
+Subject: [PATCH] glamor: Fix fbo pixmap format with GL_BGRA_EXT for GLES
+ (rebased for 21.1.7)
+
+---
+ glamor/glamor.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/glamor/glamor.c b/glamor/glamor.c
+index da2ea94..9fbe886 100644
+--- a/glamor/glamor.c
++++ b/glamor/glamor.c
+@@ -586,6 +586,10 @@ glamor_setup_formats(ScreenPtr screen)
+ 
+     if (glamor_priv->is_gles) {
+         assert(X_BYTE_ORDER == X_LITTLE_ENDIAN);
++        glamor_add_format(screen, 24, PICT_x8r8g8b8,
++                          GL_BGRA_EXT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, TRUE);
++        glamor_add_format(screen, 32, PICT_a8r8g8b8,
++                          GL_BGRA_EXT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, TRUE);
+         glamor_add_format(screen, 24, PICT_x8b8g8r8,
+                           GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, TRUE);
+         glamor_add_format(screen, 32, PICT_a8b8g8r8,
+-- 
+2.34.1
+
