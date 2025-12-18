@@ -6,7 +6,6 @@ echo "=== YoctianOS Setup ==="
 
 # Find an existing non-system user (UID >= 1000) if any
 find_existing_user() {
-    # Exclude system accounts and nobody; return first match or empty
     EXISTING_USER="$(awk -F: '($3 >= 1000) && ($1 != "nobody") { print $1; exit }' /etc/passwd 2>/dev/null || true)"
     echo "$EXISTING_USER"
 }
@@ -32,14 +31,13 @@ fi
 EXISTING="$(find_existing_user)"
 if [ -n "$EXISTING" ]; then
     printf "An existing user was found on the system: %s\n" "$EXISTING"
-    printf "Do you want to use this user (u) or create a new one (n)? [u/n]: "
+    printf "Use this user (u) or create a new one (n)? [u/n]: "
     read CHOICE
     CHOICE="$(echo "$CHOICE" | tr '[:upper:]' '[:lower:]')"
     if [ "$CHOICE" = "u" ] || [ -z "$CHOICE" ]; then
         USER="$EXISTING"
         echo "Using existing user: $USER"
-        # Optionally allow password change
-        printf "Do you want to change the password for '%s'? [y/N]: " "$USER"
+        printf "Change the password for '%s'? [y/N]: " "$USER"
         read CHANGE_PASS
         if echo "$CHANGE_PASS" | grep -iq '^y'; then
             while true; do
@@ -111,10 +109,10 @@ _trim() {
     echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
-# Determine architecture if available
-ARCH=""
+# Determine architecture for web repos only (optional)
+WEB_ARCH=""
 if command -v dpkg >/dev/null 2>&1; then
-    ARCH="$(dpkg --print-architecture 2>/dev/null || true)"
+    WEB_ARCH="$(dpkg --print-architecture 2>/dev/null || true)"
 fi
 
 YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
@@ -172,23 +170,18 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
                     ;;
             esac
 
+            # Build deb line:
+            # - Local repos: do NOT include architecture; optionally mark trusted
+            # - Web/public repos: include architecture if available (WEB_ARCH)
             if [ "$is_local" -eq 1 ]; then
                 if [ "$LOCAL_TRUST" = "yes" ]; then
-                    if [ -n "$ARCH" ]; then
-                        printf "deb [trusted=yes arch=%s] %s ./\n" "$ARCH" "$url" >> "$TMP_LIST"
-                    else
-                        printf "deb [trusted=yes] %s ./\n" "$url" >> "$TMP_LIST"
-                    fi
+                    printf "deb [trusted=yes] %s ./\n" "$url" >> "$TMP_LIST"
                 else
-                    if [ -n "$ARCH" ]; then
-                        printf "deb [arch=%s] %s ./\n" "$ARCH" "$url" >> "$TMP_LIST"
-                    else
-                        printf "deb %s ./\n" "$url" >> "$TMP_LIST"
-                    fi
+                    printf "deb %s ./\n" "$url" >> "$TMP_LIST"
                 fi
             else
-                if [ -n "$ARCH" ]; then
-                    printf "deb [arch=%s] %s ./\n" "$ARCH" "$url" >> "$TMP_LIST"
+                if [ -n "$WEB_ARCH" ]; then
+                    printf "deb [arch=%s] %s ./\n" "$WEB_ARCH" "$url" >> "$TMP_LIST"
                 else
                     printf "deb %s ./\n" "$url" >> "$TMP_LIST"
                 fi
@@ -230,4 +223,4 @@ fi
 # Disable this service so it won't run again
 systemctl disable firstboot-user.service || true
 
-echo "First boot setup complete. User '${USER}' created or selected."
+echo "Setup complete! User '${USER}' created or selected."
