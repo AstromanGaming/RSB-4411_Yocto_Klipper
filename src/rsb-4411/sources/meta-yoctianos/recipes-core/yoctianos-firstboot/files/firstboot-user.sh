@@ -9,6 +9,46 @@ find_existing_user() {
     awk -F: '($3 >= 1000) && ($1 != "nobody") && ($1 != "root") { print $1; exit }' /etc/passwd 2>/dev/null || true
 }
 
+# Grant sudo: ensure user can use sudo (defensive, safe)
+grant_sudo_for_user() {
+    u="$1"
+    if [ -z "$u" ]; then
+        echo "No user specified for sudo grant"
+        return 1
+    fi
+
+    # Warn if sudo is missing
+    if ! command -v sudo >/dev/null 2>&1; then
+        echo "Warning: 'sudo' not found. Install sudo for interactive sudo usage."
+    fi
+
+    # If group 'sudo' exists, add user to it
+    if getent group sudo >/dev/null 2>&1; then
+        echo "Adding $u to group 'sudo'..."
+        usermod -a -G sudo "$u" >/dev/null 2>&1 || true
+    fi
+
+    # Create a user-specific sudoers file to ensure the user can sudo
+    SUDOERS_FILE="/etc/sudoers.d/99-${u}"
+    printf "%s ALL=(ALL) NOPASSWD: ALL\n" "$u" > "$SUDOERS_FILE"
+    chmod 0440 "$SUDOERS_FILE"
+
+    # Validate the sudoers file syntax; remove it if invalid
+    if command -v visudo >/dev/null 2>&1; then
+        if ! visudo -cf "$SUDOERS_FILE" >/dev/null 2>&1; then
+            echo "Error: sudoers file syntax invalid. Removing $SUDOERS_FILE"
+            rm -f "$SUDOERS_FILE"
+            return 1
+        fi
+    else
+        echo "Warning: visudo not available to validate sudoers file. Please validate manually."
+    fi
+
+    echo "Sudo configured for user: $u"
+    echo "Note: the user may need to re-login for group membership to take effect."
+    return 0
+}
+
 # Hostname (optional)
 printf "Hostname (leave empty to keep the existing one): "
 read NEWHOST
@@ -28,7 +68,6 @@ fi
 
 # Check for existing user (explicitly ignore root)
 EXISTING="$(find_existing_user)"
-# Defensive: if somehow "root" appears, treat as no existing user
 if [ "$EXISTING" = "root" ]; then
     EXISTING=""
 fi
@@ -66,7 +105,6 @@ if [ -n "$EXISTING" ]; then
         USER=""
     fi
 else
-    # No suitable existing non-system user found; ensure USER is empty so we create one
     USER=""
 fi
 
@@ -109,15 +147,8 @@ if [ -z "${USER:-}" ]; then
     echo "User '$USER' created."
 fi
 
-# Grant sudo (create sudoers entry if no sudo group)
-if [ "$USER" != "root" ]; then
-    if getent group sudo >/dev/null 2>&1; then
-        usermod -a -G sudo "$USER" || true
-    else
-        echo "${USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-"${USER}"
-        chmod 0440 /etc/sudoers.d/99-"${USER}"
-    fi
-fi
+# Grant sudo to the created/selected user
+grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for $USER"
 
 # Helper to trim whitespace
 _trim() {
@@ -186,8 +217,6 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
             esac
 
             # Build deb line:
-            # - Local repos: do NOT include architecture; optionally mark trusted
-            # - Web/public repos: include architecture if available (WEB_ARCH)
             if [ "$is_local" -eq 1 ]; then
                 if [ "$LOCAL_TRUST" = "yes" ]; then
                     printf "deb [trusted=yes] %s ./\n" "$url" >> "$TMP_LIST"
