@@ -4,10 +4,9 @@ set -e
 echo
 echo "=== YoctianOS Setup ==="
 
-# Find an existing non-system user (UID >= 1000) if any
+# Find an existing non-system user (UID >= 1000) if any; explicitly exclude root
 find_existing_user() {
-    EXISTING_USER="$(awk -F: '($3 >= 1000) && ($1 != "nobody") { print $1; exit }' /etc/passwd 2>/dev/null || true)"
-    echo "$EXISTING_USER"
+    awk -F: '($3 >= 1000) && ($1 != "nobody") && ($1 != "root") { print $1; exit }' /etc/passwd 2>/dev/null || true
 }
 
 # Hostname (optional)
@@ -27,10 +26,15 @@ if [ -n "$NEWHOST" ]; then
     fi
 fi
 
-# Check for existing user
+# Check for existing user (explicitly ignore root)
 EXISTING="$(find_existing_user)"
+# Defensive: if somehow "root" appears, treat as no existing user
+if [ "$EXISTING" = "root" ]; then
+    EXISTING=""
+fi
+
 if [ -n "$EXISTING" ]; then
-    printf "An existing user was found on the system: %s\n" "$EXISTING"
+    printf "An existing non-system user was found on the system: %s\n" "$EXISTING"
     printf "Use this user (u) or create a new one (n)? [u/n]: "
     read CHOICE
     CHOICE="$(echo "$CHOICE" | tr '[:upper:]' '[:lower:]')"
@@ -61,6 +65,9 @@ if [ -n "$EXISTING" ]; then
     else
         USER=""
     fi
+else
+    # No suitable existing non-system user found; ensure USER is empty so we create one
+    USER=""
 fi
 
 # If no existing user chosen, prompt to create one
@@ -68,6 +75,12 @@ if [ -z "${USER:-}" ]; then
     while true; do
         printf "Username: "
         read USER
+        # disallow "root" as a username here
+        if [ "$USER" = "root" ]; then
+            echo "The username 'root' is not allowed. Please choose another username."
+            USER=""
+            continue
+        fi
         if [ -n "$USER" ]; then break; fi
     done
 
@@ -97,11 +110,13 @@ if [ -z "${USER:-}" ]; then
 fi
 
 # Grant sudo (create sudoers entry if no sudo group)
-if getent group sudo >/dev/null 2>&1; then
-    usermod -a -G sudo "$USER" || true
-else
-    echo "${USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-${USER}
-    chmod 0440 /etc/sudoers.d/99-${USER}
+if [ "$USER" != "root" ]; then
+    if getent group sudo >/dev/null 2>&1; then
+        usermod -a -G sudo "$USER" || true
+    else
+        echo "${USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-"${USER}"
+        chmod 0440 /etc/sudoers.d/99-"${USER}"
+    fi
 fi
 
 # Helper to trim whitespace
@@ -211,6 +226,7 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
         echo "No repos added."
     fi
 else
+    rm -f "$TMP_LIST"
     echo "Skipping APT repo configuration (recommended step skipped)."
 fi
 
