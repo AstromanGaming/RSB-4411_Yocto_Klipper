@@ -20,7 +20,6 @@ RDEPENDS_${PN} += "bash"
 do_install() {
     install -d ${D}/opt/YoctianOS-Klipper-Addon
     cp -R ${S}/. ${D}/opt/YoctianOS-Klipper-Addon
-    rm -rf ${D}/opt/YoctianOS-Klipper-Addon/.git
 
     # Normalize shebangs to /usr/bin/env bash and make scripts executable
     # Adjust the glob to match the scripts you ship (example: *.sh)
