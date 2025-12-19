@@ -20,12 +20,6 @@ RDEPENDS_${PN} += "bash"
 do_install() {
     install -d ${D}/opt/YoctianOS-Klipper-Addon
     cp -R ${S}/. ${D}/opt/YoctianOS-Klipper-Addon
-
-    # Normalize shebangs to /usr/bin/env bash and make scripts executable
-    # Adjust the glob to match the scripts you ship (example: *.sh)
-    find ${D}/opt/YoctianOS-Klipper-Addon -type f -name '*.sh' -print0 | \
-        xargs -0 -r sed -i '1 s|^#! */bin/bash|#!/usr/bin/env bash|'
-    find ${D}/opt/YoctianOS-Klipper-Addon -type f -name '*.sh' -exec chmod 0755 {} +
 }
 
 FILES:${PN} += "/opt"

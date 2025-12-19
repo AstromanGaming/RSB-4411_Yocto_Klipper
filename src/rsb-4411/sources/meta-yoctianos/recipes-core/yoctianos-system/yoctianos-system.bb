@@ -1,6 +1,6 @@
 PN = "yoctianos-system"
 PV = "DEV"
-PR = "r1"
+PR = "r2"
 
 SUMMARY = "YoctianOS files system package"
 LICENSE = "MIT"
@@ -10,7 +10,8 @@ SRC_URI = "file://os-release \
            file://issue \
            file://hosts \
            file://motd \
-           file://LICENSE"
+           file://LICENSE \
+           file://profile"
 
 S = "${WORKDIR}"
 
@@ -23,6 +24,7 @@ do_install() {
     install -m 0644 ${WORKDIR}/issue ${D}${sysconfdir}/issue
     install -m 0644 ${WORKDIR}/hosts ${D}${sysconfdir}/hosts
     install -m 0644 ${WORKDIR}/motd ${D}${sysconfdir}/motd
+    install -m 0644 ${WORKDIR}/profile ${D}${sysconfdir}/profile
 }
 
 FILES:${PN} += " \
@@ -31,4 +33,5 @@ FILES:${PN} += " \
     ${sysconfdir}/issue \
     ${sysconfdir}/hosts \
     ${sysconfdir}/motd \
+    ${sysconfdir}/profile \
 "

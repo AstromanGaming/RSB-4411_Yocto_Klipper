@@ -1,0 +1,8 @@
+# /etc/profile
+# Dynamic shell prompt for YoctianOS
+
+# \u = current username
+# \h = hostname
+# \w = current working directory
+# \$ = shows $ for user, # for root
+export PS1="\u@\h:\w\$ "
