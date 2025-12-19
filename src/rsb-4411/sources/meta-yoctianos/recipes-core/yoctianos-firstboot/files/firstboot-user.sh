@@ -4,7 +4,7 @@ set -e
 echo
 echo "=== YoctianOS Setup ==="
 
-# Find an existing non-system user (UID >= 1000) if any; explicitly exclude root
+# Find an existing non-system user (UID >= 1000) if any; explicitly exclude root and nobody
 find_existing_user() {
     awk -F: '($3 >= 1000) && ($1 != "nobody") && ($1 != "root") { print $1; exit }' /etc/passwd 2>/dev/null || true
 }
@@ -22,42 +22,51 @@ grant_sudo_for_user() {
         echo "Warning: 'sudo' not found. Install sudo for interactive sudo usage."
     fi
 
-    # If group 'sudo' exists, add user to it
+    # If group 'sudo' exists, add user to it (ignore errors)
     if getent group sudo >/dev/null 2>&1; then
         echo "Adding $u to group 'sudo'..."
         usermod -a -G sudo "$u" >/dev/null 2>&1 || true
     fi
 
-    # Create a user-specific sudoers file to ensure the user can sudo
-    SUDOERS_FILE="/etc/sudoers.d/99-${u}"
-    printf "%s ALL=(ALL) NOPASSWD: ALL\n" "$u" > "$SUDOERS_FILE"
-    chmod 0440 "$SUDOERS_FILE"
+    # Create a user-specific sudoers file atomically and require password
+    TMP_SUDOERS="$(mktemp /tmp/yoctian_sudoers.XXXXXX)" || return 1
+    SUDOERS_DEST="/etc/sudoers.d/99-${u}"
 
-    # Validate the sudoers file syntax; remove it if invalid
+    # Require password (no NOPASSWD)
+    printf "%s ALL=(ALL) ALL\n" "$u" > "$TMP_SUDOERS"
+    chmod 0440 "$TMP_SUDOERS"
+
+    # Validate the sudoers file syntax; only move it into place if valid
     if command -v visudo >/dev/null 2>&1; then
-        if ! visudo -cf "$SUDOERS_FILE" >/dev/null 2>&1; then
-            echo "Error: sudoers file syntax invalid. Removing $SUDOERS_FILE"
-            rm -f "$SUDOERS_FILE"
+        if visudo -cf "$TMP_SUDOERS" >/dev/null 2>&1; then
+            mv "$TMP_SUDOERS" "$SUDOERS_DEST"
+            chmod 0440 "$SUDOERS_DEST"
+            echo "Sudo configured for user: $u (password required)"
+        else
+            echo "Error: sudoers file syntax invalid. Not installing $SUDOERS_DEST"
+            rm -f "$TMP_SUDOERS"
             return 1
         fi
     else
-        echo "Warning: visudo not available to validate sudoers file. Please validate manually."
+        # If visudo not available, be conservative: do not install unvalidated file
+        echo "Warning: visudo not available to validate sudoers file. Not installing $SUDOERS_DEST"
+        rm -f "$TMP_SUDOERS"
+        return 1
     fi
 
-    echo "Sudo configured for user: $u"
     echo "Note: the user may need to re-login for group membership to take effect."
     return 0
 }
 
 # Hostname (optional)
 printf "Hostname (leave empty to keep the existing one): "
-read NEWHOST
+read -r NEWHOST
 if [ -n "$NEWHOST" ]; then
-    echo "$NEWHOST" > /etc/hostname
+    printf '%s\n' "$NEWHOST" > /etc/hostname
     if grep -q '^127\.0\.1\.1' /etc/hosts 2>/dev/null; then
         sed -i "s/^127\.0\.1\.1.*/127.0.1.1\t${NEWHOST}/" /etc/hosts
     else
-        echo "127.0.1.1\t${NEWHOST}" >> /etc/hosts
+        printf '127.0.1.1\t%s\n' "$NEWHOST" >> /etc/hosts
     fi
     if command -v hostnamectl >/dev/null 2>&1; then
         hostnamectl set-hostname "$NEWHOST" || true
@@ -75,23 +84,23 @@ fi
 if [ -n "$EXISTING" ]; then
     printf "An existing non-system user was found on the system: %s\n" "$EXISTING"
     printf "Use this user (u) or create a new one (n)? [u/n]: "
-    read CHOICE
+    read -r CHOICE
     CHOICE="$(echo "$CHOICE" | tr '[:upper:]' '[:lower:]')"
     if [ "$CHOICE" = "u" ] || [ -z "$CHOICE" ]; then
         USER="$EXISTING"
         echo "Using existing user: $USER"
         printf "Change the password for '%s'? [y/N]: " "$USER"
-        read CHANGE_PASS
+        read -r CHANGE_PASS
         if echo "$CHANGE_PASS" | grep -iq '^y'; then
             while true; do
-                stty -echo
+                if command -v stty >/dev/null 2>&1; then stty -echo; fi
                 printf "New password: "
-                read PASS
+                read -r PASS
                 echo
                 printf "Confirm: "
-                read PASS2
+                read -r PASS2
                 echo
-                stty echo
+                if command -v stty >/dev/null 2>&1; then stty echo; fi
                 if [ "$PASS" = "$PASS2" ] && [ -n "$PASS" ]; then
                     echo "${USER}:${PASS}" | chpasswd
                     echo "Password updated for $USER"
@@ -112,7 +121,7 @@ fi
 if [ -z "${USER:-}" ]; then
     while true; do
         printf "Username: "
-        read USER
+        read -r USER
         # disallow "root" as a username here
         if [ "$USER" = "root" ]; then
             echo "The username 'root' is not allowed. Please choose another username."
@@ -124,14 +133,14 @@ if [ -z "${USER:-}" ]; then
 
     # Password prompt (twice)
     while true; do
-        stty -echo
+        if command -v stty >/dev/null 2>&1; then stty -echo; fi
         printf "Password: "
-        read PASS
+        read -r PASS
         echo
         printf "Confirm password: "
-        read PASS2
+        read -r PASS2
         echo
-        stty echo
+        if command -v stty >/dev/null 2>&1; then stty echo; fi
         if [ "$PASS" = "$PASS2" ] && [ -n "$PASS" ]; then
             break
         else
@@ -147,7 +156,7 @@ if [ -z "${USER:-}" ]; then
     echo "User '$USER' created."
 fi
 
-# Grant sudo to the created/selected user
+# Grant sudo to the created/selected user (will require password)
 grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for $USER"
 
 # Helper to trim whitespace
@@ -162,12 +171,18 @@ if command -v dpkg >/dev/null 2>&1; then
 fi
 
 YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
-TMP_LIST="$(mktemp)"
+TMP_LIST="$(mktemp /tmp/yoctian_repolist.XXXXXX)" || TMP_LIST=""
 ADDED=0
+
+# Ensure TMP_LIST is removed on exit if it exists
+_cleanup_tmp() {
+    [ -n "$TMP_LIST" ] && [ -f "$TMP_LIST" ] && rm -f "$TMP_LIST"
+}
+trap _cleanup_tmp EXIT HUP INT TERM
 
 echo
 printf "Adding APT repositories is recommended. Add repos now? [Y/n]: "
-read ADDREPOS
+read -r ADDREPOS
 ADDREPOS="$(_trim "$ADDREPOS")"
 if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
     echo
@@ -178,13 +193,13 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
 
     while true; do
         printf "Repo URL (leave empty to finish): "
-        read INPUT
+        read -r INPUT
         INPUT="$(_trim "$INPUT")"
         [ -z "$INPUT" ] && break
 
         if [ "$LOCAL_TRUST_SET" -eq 0 ]; then
             printf "Mark local LAN/file repos as trusted (skip GPG verification)? [Y/n]: "
-            read ans
+            read -r ans
             ans="$(_trim "$ans")"
             if [ -z "$ans" ] || echo "$ans" | grep -iq '^y'; then
                 LOCAL_TRUST="yes"
@@ -236,13 +251,14 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
         IFS="$OLDIFS"
     done
 
-    if [ "$ADDED" -eq 1 ]; then
+    if [ "$ADDED" -eq 1 ] && [ -n "$TMP_LIST" ]; then
         mkdir -p "$(dirname "$YOCTIAN_LIST")"
         if [ -f "$YOCTIAN_LIST" ]; then
-            cat "$YOCTIAN_LIST" "$TMP_LIST" | awk '!seen[$0]++' > "${TMP_LIST}.uniq"
+            awk '!seen[$0]++' "$YOCTIAN_LIST" "$TMP_LIST" > "${TMP_LIST}.uniq" || true
             mv "${TMP_LIST}.uniq" "$YOCTIAN_LIST"
         else
             mv "$TMP_LIST" "$YOCTIAN_LIST"
+            TMP_LIST=""
         fi
         chmod 0644 "$YOCTIAN_LIST"
         echo "Added repos to $YOCTIAN_LIST"
@@ -251,21 +267,28 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
             apt-get update || true
         fi
     else
-        rm -f "$TMP_LIST"
+        [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
         echo "No repos added."
     fi
 else
-    rm -f "$TMP_LIST"
+    [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
     echo "Skipping APT repo configuration (recommended step skipped)."
 fi
 
 # Update /etc/os-release PRETTY_NAME to include hostname if available
 if [ -f /etc/os-release ]; then
     HOSTNAME_DISPLAY="${NEWHOST:-$(cat /etc/hostname 2>/dev/null || echo yoctianos)}"
-    sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"YoctianOS DEV (${HOSTNAME_DISPLAY})\"/" /etc/os-release || true
+    # Use a safe sed replace; if PRETTY_NAME not present, append it
+    if grep -q '^PRETTY_NAME=' /etc/os-release 2>/dev/null; then
+        sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"YoctianOS DEV (${HOSTNAME_DISPLAY})\"/" /etc/os-release || true
+    else
+        printf 'PRETTY_NAME="YoctianOS DEV (%s)"\n' "$HOSTNAME_DISPLAY" >> /etc/os-release
+    fi
 fi
 
 # Disable this service so it won't run again
-systemctl disable firstboot-user.service || true
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl disable firstboot-user.service || true
+fi
 
 echo "Setup complete! User '${USER}' created or selected."
