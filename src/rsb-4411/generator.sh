@@ -41,7 +41,7 @@ EOF
 cat << EOF > "$REDIRECTOR_SCRIPT"
 #!/bin/bash
 
-cp ~/YoctianOS-Distro/script/redirector.sh.template ~/YoctianOS-Distro/src/rsb-4411/build_$BUILD_DIR/redirector.sh
+cp ~/YoctianOS-Distro/script/rsb-4411/redirector.sh.template ~/YoctianOS-Distro/src/rsb-4411/build_$BUILD_DIR/redirector.sh
 EOF
 
 # Create the .conf
