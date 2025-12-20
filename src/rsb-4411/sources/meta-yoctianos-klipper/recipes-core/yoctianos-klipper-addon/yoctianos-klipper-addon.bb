@@ -10,18 +10,23 @@ SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 
+inherit allarch
+
 # No configure/compile steps
 do_configure[noexec] = "1"
 do_compile[noexec] = "1"
 
-# Ensure package depends on bash at runtime
-RDEPENDS_${PN} += "bash"
+# Runtime dependencies
+RDEPENDS:${PN} += "bash"
 
 do_install() {
     install -d ${D}/opt/YoctianOS-Klipper-Addon
-    cp -R ${S}/. ${D}/opt/YoctianOS-Klipper-Addon
+
+    # Copy everything except .git
+    cp -R ${S}/* ${D}/opt/YoctianOS-Klipper-Addon
+
+    # Ensure .git is not included even if hidden files slip through
+    rm -rf ${D}/opt/YoctianOS-Klipper-Addon/.git
 }
 
 FILES:${PN} += "/opt"
-
-inherit allarch
