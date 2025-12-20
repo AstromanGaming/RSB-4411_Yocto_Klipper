@@ -21,11 +21,7 @@ RDEPENDS:${PN} += "bash"
 
 do_install() {
     install -d ${D}/opt/YoctianOS-Klipper-Addon
-
-    # Copy everything except .git
     cp -R ${S}/* ${D}/opt/YoctianOS-Klipper-Addon
-
-    # Ensure .git is not included even if hidden files slip through
     rm -rf ${D}/opt/YoctianOS-Klipper-Addon/.git
 }
 
