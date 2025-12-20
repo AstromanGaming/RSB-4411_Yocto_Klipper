@@ -206,6 +206,30 @@ if [ -z "${USER:-}" ]; then
     echo "User '$USER' created."
 fi
 
+# Ensure user has a ~/.bash_profile that sources /etc/profile and ~/.bashrc
+USER_HOME="$(getent passwd "$USER" | cut -d: -f6)"
+BASH_PROFILE_PATH="${USER_HOME}/.bash_profile"
+
+if [ -n "$USER_HOME" ] && [ -d "$USER_HOME" ]; then
+    # Create .bash_profile only if it does not already contain /etc/profile sourcing
+    if [ ! -f "$BASH_PROFILE_PATH" ] || ! grep -q '/etc/profile' "$BASH_PROFILE_PATH"; then
+        cat > "$BASH_PROFILE_PATH" <<'EOF'
+# Source global profile
+[ -r /etc/profile ] && . /etc/profile
+# Load user's bashrc if present
+[ -r ~/.bashrc ] && . ~/.bashrc
+EOF
+        # Set ownership and permissions
+        chown "$USER":"$USER" "$BASH_PROFILE_PATH" 2>/dev/null || true
+        chmod 644 "$BASH_PROFILE_PATH" 2>/dev/null || true
+        echo "Created $BASH_PROFILE_PATH for user $USER"
+    else
+        echo "$BASH_PROFILE_PATH already configures /etc/profile"
+    fi
+else
+    echo "Warning: could not determine home directory for $USER; skipping .bash_profile creation"
+fi
+
 # Grant sudo to the created/selected user (will require password)
 grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for $USER"
 
