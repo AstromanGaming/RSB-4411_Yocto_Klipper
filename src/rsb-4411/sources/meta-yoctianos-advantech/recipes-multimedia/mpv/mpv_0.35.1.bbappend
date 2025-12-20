@@ -1,9 +1,12 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+# i.MX6 Vivante GPU does NOT support desktop OpenGL or GLX
+# Remove opengl PACKAGECONFIG so the recipe never triggers GLX logic
+PACKAGECONFIG:remove:pn-mpv = "opengl gl-x11 vdpau-gl-x11"
 
-SRC_URI:append = " file://0001-disable-forced-glx.patch"
-
-PACKAGECONFIG:remove:pn-mpv = "gl-x11"
+# Enable the correct GPU path: EGL + GLES2 + X11
 PACKAGECONFIG:append:pn-mpv = " egl gles2 x11"
 
+# Force-disable GLX in case anything tries to re-add it
+EXTRA_OECONF:append:pn-mpv = " --disable-gl-x11"
+
+# Also remove any GLX flags the recipe may have appended
 EXTRA_OECONF:remove:pn-mpv = "--enable-gl-x11"
-EXTRA_OECONF:append:pn-mpv = " --disable-gl-x11 --enable-egl --enable-gles2"
