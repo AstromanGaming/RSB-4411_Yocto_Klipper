@@ -1,6 +1,6 @@
 PN = "yoctianos-firstboot"
 PV = "DEV"
-PR = "r6"
+PR = "r7"
 
 SUMMARY = "YoctianOS first boot user setup and/or setup assistant package"
 LICENSE = "MIT"

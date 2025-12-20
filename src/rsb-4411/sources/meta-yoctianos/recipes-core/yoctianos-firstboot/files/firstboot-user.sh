@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# This script must be run as root (via sudo or as root).
+if [ "$(id -u)" -ne 0 ]; then
+    echo "ERROR: This script must be run with sudo or as root. Aborting."
+    exit 1
+fi
+
 echo
 echo "=== YoctianOS Setup ==="
 
@@ -10,10 +16,11 @@ find_existing_user() {
 }
 
 # Grant sudo: ensure user can use sudo (defensive, safe)
+# This version installs a sudoers file without visudo validation (per request).
 grant_sudo_for_user() {
     u="$1"
     if [ -z "$u" ]; then
-        echo "No user specified for sudo grant"
+        echo "No user specified for sudo grant" >&2
         return 1
     fi
 
@@ -36,26 +43,69 @@ grant_sudo_for_user() {
     printf "%s ALL=(ALL) ALL\n" "$u" > "$TMP_SUDOERS"
     chmod 0440 "$TMP_SUDOERS"
 
-    # Validate the sudoers file syntax; only move it into place if valid
-    if command -v visudo >/dev/null 2>&1; then
-        if visudo -cf "$TMP_SUDOERS" >/dev/null 2>&1; then
-            mv "$TMP_SUDOERS" "$SUDOERS_DEST"
-            chmod 0440 "$SUDOERS_DEST"
-            echo "Sudo configured for user: $u (password required)"
-        else
-            echo "Error: sudoers file syntax invalid. Not installing $SUDOERS_DEST"
-            rm -f "$TMP_SUDOERS"
-            return 1
-        fi
-    else
-        # If visudo not available, be conservative: do not install unvalidated file
-        echo "Warning: visudo not available to validate sudoers file. Not installing $SUDOERS_DEST"
-        rm -f "$TMP_SUDOERS"
-        return 1
-    fi
+    # Install the sudoers file (no visudo validation)
+    mv "$TMP_SUDOERS" "$SUDOERS_DEST"
+    chmod 0440 "$SUDOERS_DEST"
+    echo "Sudo configured for user: $u (password required)"
 
     echo "Note: the user may need to re-login for group membership to take effect."
     return 0
+}
+
+# Verify that the user has sudo privileges; if not, try to add them to sudo/wheel and re-check.
+# If verification ultimately fails, exit the script (user must have sudo).
+verify_user_in_sudo() {
+    u="$1"
+    if [ -z "$u" ]; then
+        echo "verify_user_in_sudo: no user specified" >&2
+        return 1
+    fi
+
+    user_in_sudo_group() {
+        if id -nG "$u" >/dev/null 2>&1; then
+            id -nG "$u" | grep -Eq '\b(sudo|wheel)\b' && return 0 || return 1
+        fi
+        return 1
+    }
+
+    user_has_sudoers_file() {
+        [ -f "/etc/sudoers.d/99-${u}" ] && return 0 || return 1
+    }
+
+    # First check
+    if user_in_sudo_group || user_has_sudoers_file; then
+        echo "Verification: user '$u' already has sudo privileges."
+        return 0
+    fi
+
+    echo "User '$u' does not appear to have sudo privileges. Attempting to add to 'sudo' or 'wheel' group..."
+
+    # Try to add to sudo or wheel group if present
+    if getent group sudo >/dev/null 2>&1; then
+        usermod -a -G sudo "$u" >/dev/null 2>&1 || true
+    elif getent group wheel >/dev/null 2>&1; then
+        usermod -a -G wheel "$u" >/dev/null 2>&1 || true
+    else
+        echo "No 'sudo' or 'wheel' group found on this system. Will check for sudoers file."
+    fi
+
+    # Short pause to allow group membership to update
+    sleep 1
+
+    # Re-check
+    if user_in_sudo_group || user_has_sudoers_file; then
+        echo "Verification: user '$u' now has sudo privileges."
+        return 0
+    fi
+
+    # Final check: accept if sudoers file exists
+    if user_has_sudoers_file; then
+        echo "Verification: sudoers file found for '$u'."
+        return 0
+    fi
+
+    echo "ERROR: failed to ensure user '$u' has sudo privileges. Aborting." >&2
+    exit 1
 }
 
 # Hostname (optional)
@@ -158,6 +208,9 @@ fi
 
 # Grant sudo to the created/selected user (will require password)
 grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for $USER"
+
+# Verify the user has sudo privileges; exit if verification fails
+verify_user_in_sudo "$USER"
 
 # Helper to trim whitespace
 _trim() {
