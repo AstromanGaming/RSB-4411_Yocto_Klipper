@@ -1,0 +1,9 @@
+diff --git a/waf.py b/waf.py
+index 1111111..2222222 100644
+--- a/waf.py
++++ b/waf.py
+@@ -200,9 +200,6 @@ def configure(ctx):
+     # Remove forced GLX/VDPAU/egl-x11 flags for embedded platforms
+-    extras.append(" --enable-gl-x11")
+-    extras.append(" --enable-egl-x11")
+-    extras.append(" --enable-vdpau-gl-x11")
