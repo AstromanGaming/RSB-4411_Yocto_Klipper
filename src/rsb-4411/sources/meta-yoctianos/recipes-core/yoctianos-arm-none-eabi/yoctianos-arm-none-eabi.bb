@@ -3,15 +3,16 @@ PN = "yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r1"
 
-DEPENDS += "dpkg-native"
+#DEPENDS += "dpkg-native"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 SRC_URI = " \
-    http://ftp.debian.org/debian/pool/main/g/gcc-arm-none-eabi/gcc-arm-none-eabi_14.2.rel1-1_armhf.deb;name=gcc \
-    http://ftp.debian.org/debian/pool/main/b/binutils-arm-none-eabi/binutils-arm-none-eabi_2.44-3+23+b1_armhf.deb;name=binutils \
-    http://ftp.debian.org/debian/pool/main/n/newlib/libnewlib-arm-none-eabi_4.5.0.20241231-1_all.deb;name=newlib \
+    file://gcc-arm-none-eabi_14.2.rel1-1_armhf.deb;name=gcc \
+    file://binutils-arm-none-eabi_2.44-3+23+b1_armhf.deb;name=binutils \
+    file://libnewlib-arm-none-eabi_4.5.0.20241231-1_all.deb;name=newlib \
+    file://LICENSE \
 "
 
 SRC_URI[gcc.sha256sum] = "e1bd53fca05ac6dcf0cb261cc73deb24f58adf971d7ce2fc8edcd40027217e32"
