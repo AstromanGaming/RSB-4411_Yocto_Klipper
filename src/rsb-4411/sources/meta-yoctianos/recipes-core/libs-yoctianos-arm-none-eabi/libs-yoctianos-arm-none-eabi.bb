@@ -3,18 +3,6 @@ PN = "libs-yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r1"
 
-PREMIRRORS_prepend = "\
-  http://.*/.* https://deb.debian.org/debian/ \n \
-  http://.*/.* http://mirror.csclub.uwaterloo.ca/debian/ \n \
-  http://.*/.* http://ftp.fr.debian.org/debian/ \n \
-"
-
-MIRRORS_prepend = "\
-  http://.*/.* https://deb.debian.org/debian/ \n \
-  http://.*/.* http://mirror.csclub.uwaterloo.ca/debian/ \n \
-  http://.*/.* http://ftp.fr.debian.org/debian/ \n \
-"
-
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
