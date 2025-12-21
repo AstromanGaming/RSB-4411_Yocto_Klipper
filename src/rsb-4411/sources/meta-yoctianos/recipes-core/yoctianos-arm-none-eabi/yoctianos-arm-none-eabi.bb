@@ -46,5 +46,10 @@ FILES:${PN} = " \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
 
-INSANE_SKIP:${PN} = "ldflags"
-INSANE_SKIP:${PN} += "already-stripped"
+# This is a prebuilt external toolchain, not a target package
+INHIBIT_DEFAULT_DEPS = "1"
+RDEPENDS:${PN} = ""
+RRECOMMENDS:${PN} = ""
+
+# Disable QA checks that do not apply to external toolchains
+INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
