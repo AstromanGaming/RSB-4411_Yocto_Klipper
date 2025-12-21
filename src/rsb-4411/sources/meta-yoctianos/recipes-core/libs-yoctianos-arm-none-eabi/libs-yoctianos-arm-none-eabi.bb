@@ -3,6 +3,18 @@ PN = "libs-yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r1"
 
+PREMIRRORS_prepend = "\
+  http://.*/.* https://deb.debian.org/debian/ \n \
+  http://.*/.* http://mirror.csclub.uwaterloo.ca/debian/ \n \
+  http://.*/.* http://ftp.fr.debian.org/debian/ \n \
+"
+
+MIRRORS_prepend = "\
+  http://.*/.* https://deb.debian.org/debian/ \n \
+  http://.*/.* http://mirror.csclub.uwaterloo.ca/debian/ \n \
+  http://.*/.* http://ftp.fr.debian.org/debian/ \n \
+"
+
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
@@ -28,7 +40,7 @@ SRC_URI[libisl23.sha256sum] = "6dbb4b7620d7f220717ed710ebc8a62af5a691131edb9d6d6
 SRC_URI[libmpc3.sha256sum] = "d2efdeb151ae18e07d41b08815a9f003c2d93beec13dbcc2b23794a7e6d69665"
 SRC_URI[libmpfr6.sha256sum] = "75b15b85c73d2703b208ac47e5d4f27b81cfbc137e1e39359bb911f8d7c0c482"
 SRC_URI[libstdc++6.sha256sum] = "9c82eecc30961a3da3e062c0dba8ce076736059f4b8e7794c803985e75aea48b"
-SRC_URI[gcc-14-base.sha256sum] = "0f702fdd5e5471efda9fece892e09ce73e3447968083e1f8c341f8b66b1fb34"
+SRC_URI[gcc-14-base.sha256sum] = "0f702fdd5e5471efda9fece892e09ce73e3447968083e1f8c341f8b66b1fb340"
 SRC_URI[zlib1g.sha256sum] = "81c55a59e1570477ecef6a449bf6dce44dad67ba4ce9e04760451d4cfe200534"
 SRC_URI[libzstd1.sha256sum] = "da5238dd84fc51f782f39d435821bff556409b3dbc82d232e4e81f427fb1ca65"
 SRC_URI[libnewlib-dev.sha256sum] = "feb2ed49a464b0346e42c3506088a41025273bff5f8e6bc5777afeac3704b3c1"
