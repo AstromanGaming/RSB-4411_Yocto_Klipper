@@ -1,4 +1,4 @@
-DESCRIPTION = "YoctianOS ARM bare-metal toolchain (gcc, binutils, newlib) for ARM hosts"
+DESCRIPTION = "Debian ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS ARM hosts"
 PN = "yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r1"
@@ -20,16 +20,18 @@ SRC_URI[newlib.sha256sum] = "b444760d62896f03db89d6db94936929f300b72445763557fa9
 S = "${WORKDIR}"
 
 do_install() {
-    # Create installation directory
     install -d ${D}/opt/yoctianos-arm-none-eabi
 
-    # Simply copy the extracted content into the final destination
+    # Copy extracted content
     if [ -d "${S}/usr" ]; then
         cp -a ${S}/usr/* ${D}/opt/yoctianos-arm-none-eabi/
     else
         echo "ERROR: No extracted usr/ directory found in WORKDIR"
         exit 1
     fi
+
+    # Fix ownership to avoid host contamination
+    chown -R root:root ${D}/opt/yoctianos-arm-none-eabi
 }
 
 do_install:append() {
