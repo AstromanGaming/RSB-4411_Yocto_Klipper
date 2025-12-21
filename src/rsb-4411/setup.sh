@@ -31,9 +31,9 @@ chmod a+x ~/bin/repo
 export PATH="${PATH}:~/bin"
 
 # Initialize the repo with the specified manifest
-repo init -u https://github.com/ADVANTECH-Corp/adv-arm-yocto-bsp.git \
+repo init -u https://github.com/YoctianOS/adv-arm-yocto-bsp.git \
           -b imx-linux-mickledore \
-          -m imx6LBVD0029.xml
+          -m adv-6.1.22-2.0.0.xml
 
 # Sync the sources
 repo sync
