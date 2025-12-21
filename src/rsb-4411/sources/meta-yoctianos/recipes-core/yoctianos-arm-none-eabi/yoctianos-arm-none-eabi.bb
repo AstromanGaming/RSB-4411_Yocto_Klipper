@@ -13,10 +13,9 @@ SRC_URI = " \
     http://ftp.debian.org/debian/pool/main/n/newlib/libnewlib-arm-none-eabi_4.5.0.20241231-1_all.deb \
 "
 
-# Skip checksums for simplicity
-SRC_URI[gcc.sha256sum] = "IGNORE"
-SRC_URI[binutils.sha256sum] = "IGNORE"
-SRC_URI[newlib.sha256sum] = "IGNORE"
+SRC_URI[sha256sum] = "e1bd53fca05ac6dcf0cb261cc73deb24f58adf971d7ce2fc8edcd40027217e32"
+SRC_URI[sha256sum] = "da213bb8fd20ec453673ccea66697466b0de6785c21529bd02d9b5ec65579cfc"
+SRC_URI[sha256sum] = "b444760d62896f03db89d6db94936929f300b72445763557fa94da32b7732f51"
 
 S = "${WORKDIR}"
 
