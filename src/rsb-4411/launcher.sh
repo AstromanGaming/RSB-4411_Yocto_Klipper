@@ -12,6 +12,7 @@ find . -type f -name "*.sh" \
   ! -name "local_*.sh" \
   ! -name "bblayers_*.sh" \
   ! -name "redirector_*.sh" \
+  ! -name "memory_*.sh" \
   -exec basename {} \;
 
 # Prompt user to choose one
