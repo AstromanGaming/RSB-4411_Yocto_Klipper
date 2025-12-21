@@ -14,7 +14,6 @@ SRC_URI = " \
     http://ftp.debian.org/debian/pool/main/n/newlib/libnewlib-arm-none-eabi_4.5.0.20241231-1_all.deb;name=newlib \
 "
 
-# Correct per-file checksums
 SRC_URI[gcc.sha256sum] = "e1bd53fca05ac6dcf0cb261cc73deb24f58adf971d7ce2fc8edcd40027217e32"
 SRC_URI[binutils.sha256sum] = "da213bb8fd20ec453673ccea66697466b0de6785c21529bd02d9b5ec65579cfc"
 SRC_URI[newlib.sha256sum] = "b444760d62896f03db89d6db94936929f300b72445763557fa94da32b7732f51"
@@ -25,7 +24,8 @@ do_install() {
     install -d ${D}/opt/yoctianos-arm-none-eabi
 
     for pkg in ${WORKDIR}/*.deb; do
-        dpkg-deb -x $pkg ${D}/opt/yoctianos-arm-none-eabi/
+        [ -e "$pkg" ] || { echo "No .deb files found in WORKDIR"; exit 1; }
+        dpkg-deb -x "$pkg" ${D}/opt/yoctianos-arm-none-eabi/
     done
 }
 
