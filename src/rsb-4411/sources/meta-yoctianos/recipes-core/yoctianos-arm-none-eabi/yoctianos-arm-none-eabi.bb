@@ -1,7 +1,7 @@
 DESCRIPTION = "Debian ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS ARM hosts"
 PN = "yoctianos-arm-none-eabi"
 PV = "DEV"
-PR = "r1"
+PR = "r2"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
@@ -48,7 +48,7 @@ FILES:${PN} = " \
 
 # This is a prebuilt external toolchain, not a target package
 INHIBIT_DEFAULT_DEPS = "1"
-RDEPENDS:${PN} = ""
+RDEPENDS:${PN} = "libs-yoctianos-arm-none-eabi"
 RRECOMMENDS:${PN} = ""
 
 # Disable QA checks that do not apply to external toolchains
