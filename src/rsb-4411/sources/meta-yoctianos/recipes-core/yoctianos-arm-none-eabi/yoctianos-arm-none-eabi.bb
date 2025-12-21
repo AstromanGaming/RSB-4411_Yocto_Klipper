@@ -45,3 +45,4 @@ FILES:${PN} = " \
 "
 
 INSANE_SKIP:${PN} = "ldflags"
+INSANE_SKIP:${PN} += "already-stripped"
