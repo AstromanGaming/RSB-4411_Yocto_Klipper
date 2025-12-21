@@ -1,4 +1,5 @@
 ## YoctianOS global prompt
+
 # Run only for interactive shells
 case "$-" in *i*) ;; *) return 0 ;; esac
 
@@ -58,3 +59,7 @@ if [ -z "${PS1:-}" ] && [ -z "${PROMPT:-}" ]; then
   export PS1
 fi
 
+# Load scripts from /etc/profile.d
+for script in /etc/profile.d/*.sh ; do
+    [ -r "$script" ] && . "$script"
+done
