@@ -10,6 +10,7 @@ SRC_URI = " \
     http://ftp.debian.org/debian/pool/main/g/gcc-arm-none-eabi/gcc-arm-none-eabi_14.2.rel1-1_armhf.deb;name=gcc \
     http://ftp.debian.org/debian/pool/main/b/binutils-arm-none-eabi/binutils-arm-none-eabi_2.44-3+23+b1_armhf.deb;name=binutils \
     http://ftp.debian.org/debian/pool/main/n/newlib/libnewlib-arm-none-eabi_4.5.0.20241231-1_all.deb;name=newlib \
+    file://LICENSE \
 "
 
 # Correct per-file checksums
