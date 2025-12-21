@@ -1,5 +1,5 @@
 DESCRIPTION = "Debian ARM bare-metal toolchain (gcc, binutils, newlib) libraries for YoctianOS ARM hosts"
-PN = "lib-yoctianos-arm-none-eabi"
+PN = "libs-yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r1"
 
