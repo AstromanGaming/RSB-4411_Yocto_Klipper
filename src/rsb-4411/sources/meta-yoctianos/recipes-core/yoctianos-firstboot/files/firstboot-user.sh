@@ -33,6 +33,9 @@ grant_sudo_for_user() {
     if getent group sudo >/dev/null 2>&1; then
         echo "Adding $u to group 'sudo'..."
         usermod -a -G sudo "$u" >/dev/null 2>&1 || true
+        usermod -a -G input "$u" >/dev/null 2>&1 || true
+        usermod -a -G tty "$u" >/dev/null 2>&1 || true
+        usermod -a -G video "$u" >/dev/null 2>&1 || true
     fi
 
     # Create a user-specific sudoers file atomically and require password

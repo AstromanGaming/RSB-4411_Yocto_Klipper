@@ -1,8 +1,8 @@
 PN = "yoctianos-firstboot"
 PV = "DEV"
-PR = "r8"
+PR = "r9"
 
-SUMMARY = "YoctianOS first boot user setup and/or setup assistant package"
+SUMMARY = "YoctianOS first boot user setup and/or assistant setup package"
 LICENSE = "MIT"
 
 SRC_URI = "file://firstboot-user.sh \
