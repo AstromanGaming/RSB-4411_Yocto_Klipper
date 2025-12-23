@@ -1,4 +1,4 @@
-DESCRIPTION = "ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS ARM hosts"
+DESCRIPTION = "Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS ARM hosts"
 PN = "yoctianos-arm-none-eabi"
 PV = "DEV"
 PR = "r4"
@@ -7,11 +7,11 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 SRC_URI = " \
-    ;name=git \
+    https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/DEV-r1/yoctianos-arm-none-eabi.tar.xz;name=git \
     file://LICENSE \
 "
 
-SRC_URI[git.sha256sum] = ""
+SRC_URI[git.sha256sum] = "cd4f651acef94ad57b09694d9aca403ab0364495ee0412c55e315493df109a30"
 
 S = "${WORKDIR}"
 
