@@ -44,7 +44,7 @@ FILES:${PN} = " \
 
 # This is a prebuilt external toolchain, not a target package
 INHIBIT_DEFAULT_DEPS = "1"
-RDEPENDS:${PN} = "mpfr libmpc zlib zstd glibc isl gmp"
+RDEPENDS:${PN} = ""
 RRECOMMENDS:${PN} = ""
 
 # Disable QA checks that do not apply to external toolchains
