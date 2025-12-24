@@ -1,4 +1,4 @@
-# YoctianOS for RSB-4411
+# YoctianOS DEV (RSB-4411)
 
 ## Warning: It's not finish and it's WIP!
 
