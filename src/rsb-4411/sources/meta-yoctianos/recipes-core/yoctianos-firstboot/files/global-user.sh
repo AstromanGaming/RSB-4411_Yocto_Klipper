@@ -1,14 +1,14 @@
 #!/bin/sh
 set -e
 
-# This script must be run as root (via sudo or as root).
+# This script must be run as root user.
 if [ "$(id -u)" -ne 0 ]; then
-    echo "ERROR: This script must be run with sudo or as root. Aborting."
+    echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi
 
 echo
-echo "=== YoctianOS Setup ==="
+echo "=== YoctianOS Setup: User ==="
 
 # Find an existing non-system user (UID >= 1000) if any; explicitly exclude root and nobody
 find_existing_user() {
@@ -110,23 +110,6 @@ verify_user_in_sudo() {
     echo "ERROR: failed to ensure user '$u' has sudo privileges. Aborting." >&2
     exit 1
 }
-
-# Hostname (optional)
-printf "Hostname (leave empty to keep the existing one): "
-read -r NEWHOST
-if [ -n "$NEWHOST" ]; then
-    printf '%s\n' "$NEWHOST" > /etc/hostname
-    if grep -q '^127\.0\.1\.1' /etc/hosts 2>/dev/null; then
-        sed -i "s/^127\.0\.1\.1.*/127.0.1.1\t${NEWHOST}/" /etc/hosts
-    else
-        printf '127.0.1.1\t%s\n' "$NEWHOST" >> /etc/hosts
-    fi
-    if command -v hostnamectl >/dev/null 2>&1; then
-        hostnamectl set-hostname "$NEWHOST" || true
-    else
-        hostname "$NEWHOST" || true
-    fi
-fi
 
 # Check for existing user (explicitly ignore root)
 EXISTING="$(find_existing_user)"
@@ -239,136 +222,4 @@ grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for
 # Verify the user has sudo privileges; exit if verification fails
 verify_user_in_sudo "$USER"
 
-# Helper to trim whitespace
-_trim() {
-    echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-}
-
-# Determine architecture for web repos only (optional)
-WEB_ARCH=""
-if command -v dpkg >/dev/null 2>&1; then
-    WEB_ARCH="$(dpkg --print-architecture 2>/dev/null || true)"
-fi
-
-YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
-TMP_LIST="$(mktemp /tmp/yoctian_repolist.XXXXXX)" || TMP_LIST=""
-ADDED=0
-
-# Ensure TMP_LIST is removed on exit if it exists
-_cleanup_tmp() {
-    [ -n "$TMP_LIST" ] && [ -f "$TMP_LIST" ] && rm -f "$TMP_LIST"
-}
-trap _cleanup_tmp EXIT HUP INT TERM
-
-echo
-printf "Adding APT repositories is recommended. Add repos now? [Y/n]: "
-read -r ADDREPOS
-ADDREPOS="$(_trim "$ADDREPOS")"
-if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
-    echo
-    echo "Enter repo URLs. You can add local LAN repos (HTTP or file) and public web repos (HTTP/HTTPS)."
-    echo "One URL per prompt; comma-separated URLs allowed on a single line. Press Enter on an empty line to finish."
-    LOCAL_TRUST_SET=0
-    LOCAL_TRUST="yes"
-
-    while true; do
-        printf "Repo URL (leave empty to finish): "
-        read -r INPUT
-        INPUT="$(_trim "$INPUT")"
-        [ -z "$INPUT" ] && break
-
-        if [ "$LOCAL_TRUST_SET" -eq 0 ]; then
-            printf "Mark local LAN/file repos as trusted (skip GPG verification)? [Y/n]: "
-            read -r ans
-            ans="$(_trim "$ans")"
-            if [ -z "$ans" ] || echo "$ans" | grep -iq '^y'; then
-                LOCAL_TRUST="yes"
-            else
-                LOCAL_TRUST="no"
-            fi
-            LOCAL_TRUST_SET=1
-        fi
-
-        OLDIFS="$IFS"
-        IFS=','
-        for u in $INPUT; do
-            u="$(_trim "$u")"
-            [ -z "$u" ] && continue
-
-            case "$u" in
-                http://*|https://*|file://*) url="$u" ;;
-                *) url="http://$u" ;;
-            esac
-
-            is_local=0
-            case "$url" in
-                file://*) is_local=1 ;;
-                http://*|https://*)
-                    host="$(echo "$url" | sed -E 's#^[a-z]+://##' | cut -d/ -f1)"
-                    if echo "$host" | grep -Eq '^10\.|^192\.168\.|^172\.(1[6-9]|2[0-9]|3[0-1])\.' || echo "$host" | grep -Eq '\.local$'; then
-                        is_local=1
-                    fi
-                    ;;
-            esac
-
-            # Build deb line:
-            if [ "$is_local" -eq 1 ]; then
-                if [ "$LOCAL_TRUST" = "yes" ]; then
-                    printf "deb [trusted=yes] %s ./\n" "$url" >> "$TMP_LIST"
-                else
-                    printf "deb %s ./\n" "$url" >> "$TMP_LIST"
-                fi
-            else
-                if [ -n "$WEB_ARCH" ]; then
-                    printf "deb [arch=%s] %s ./\n" "$WEB_ARCH" "$url" >> "$TMP_LIST"
-                else
-                    printf "deb %s ./\n" "$url" >> "$TMP_LIST"
-                fi
-            fi
-
-            ADDED=1
-        done
-        IFS="$OLDIFS"
-    done
-
-    if [ "$ADDED" -eq 1 ] && [ -n "$TMP_LIST" ]; then
-        mkdir -p "$(dirname "$YOCTIAN_LIST")"
-        if [ -f "$YOCTIAN_LIST" ]; then
-            awk '!seen[$0]++' "$YOCTIAN_LIST" "$TMP_LIST" > "${TMP_LIST}.uniq" || true
-            mv "${TMP_LIST}.uniq" "$YOCTIAN_LIST"
-        else
-            mv "$TMP_LIST" "$YOCTIAN_LIST"
-            TMP_LIST=""
-        fi
-        chmod 0644 "$YOCTIAN_LIST"
-        echo "Added repos to $YOCTIAN_LIST"
-
-        if command -v apt-get >/dev/null 2>&1; then
-            apt-get update || true
-        fi
-    else
-        [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
-        echo "No repos added."
-    fi
-else
-    [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
-    echo "Skipping APT repo configuration (recommended step skipped)."
-fi
-
-# Update /etc/os-release PRETTY_NAME to include hostname if available
-if [ -f /etc/os-release ]; then
-    HOSTNAME_DISPLAY="${NEWHOST:-$(cat /etc/hostname 2>/dev/null || echo yoctianos)}"
-    # Use a safe sed replace; if PRETTY_NAME not present, append it
-    if grep -q '^PRETTY_NAME=' /etc/os-release 2>/dev/null; then
-        sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"YoctianOS DEV (${HOSTNAME_DISPLAY})\"/" /etc/os-release || true
-    else
-        printf 'PRETTY_NAME="YoctianOS DEV (%s)"\n' "$HOSTNAME_DISPLAY" >> /etc/os-release
-    fi
-fi
-
-# Disable this service so it won't run again
-if command -v systemctl >/dev/null 2>&1; then
-    systemctl disable firstboot-user.service || true
-fi
-
-echo "Setup complete! User '${USER}' created or selected."
+echo "User setup complete! User '${USER}' created or reconfigured."

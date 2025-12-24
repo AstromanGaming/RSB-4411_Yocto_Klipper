@@ -41,7 +41,7 @@ BBLAYERS += "${BSPDIR}/sources/meta-advantech/meta-tools"
 ## Yocto Project Extra layer
 BBLAYERS += "${BSPDIR}/sources/meta-microcontroller"
 
-## YoctianOS
+## YoctianOS AstrOS
 BBLAYERS += "${BSPDIR}/sources/meta-yoctianos"
 
 BBFILES += "${BSPDIR}/sources/meta-yoctianos/recipes-*/*/*.bb \
@@ -52,5 +52,5 @@ BBLAYERS += "${BSPDIR}/sources/meta-yoctianos-advantech"
 BBFILES += "${BSPDIR}/sources/meta-yoctianos-advantech/recipes-*/*/*.bb \
             ${BSPDIR}/sources/meta-yoctianos-advantech/recipes-*/*/*.bbappend"
 
-## User
+## Some User Custom
 

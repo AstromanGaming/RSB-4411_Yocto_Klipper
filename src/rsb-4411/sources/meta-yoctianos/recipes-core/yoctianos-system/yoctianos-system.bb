@@ -1,8 +1,8 @@
 PN = "yoctianos-system"
-PV = "DEV"
-PR = "r4"
+PV = "0.01"
+PR = "r0"
 
-SUMMARY = "YoctianOS files system package"
+SUMMARY = "YoctianOS DEV files system package"
 LICENSE = "MIT"
 
 SRC_URI = "file://os-release \

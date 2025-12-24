@@ -1,4 +1,4 @@
-SUMMARY = "YoctianOS Klipper Addon"
+SUMMARY = "YoctianOS Klipper Addon (git)"
 DESCRIPTION = "Install the YoctianOS-Klipper-Addon repository"
 HOMEPAGE = "https://github.com/YoctianOS/YoctianOS-Klipper-Addon"
 LICENSE = "MIT"

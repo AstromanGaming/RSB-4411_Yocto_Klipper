@@ -1,12 +1,17 @@
 PN = "yoctianos-firstboot"
-PV = "DEV"
-PR = "r9"
+PV = "0.01"
+PR = "r0"
 
-SUMMARY = "YoctianOS first boot user setup and/or assistant setup package"
+SUMMARY = "YoctianOS DEV preparation (first boot) setup and configuration setup package"
 LICENSE = "MIT"
 
-SRC_URI = "file://firstboot-user.sh \
-           file://firstboot-user.service \
+SRC_URI = "file://yoctianos-setup.sh \
+           file://global-user.sh \
+           file://global-time.sh \
+           file://global-misc.sh \
+           file://firstboot-apt.sh \
+           file://config-apt.sh \
+           file://yoctianos-first-login.sh \
            file://LICENSE"
 
 S = "${WORKDIR}"
@@ -14,20 +19,30 @@ S = "${WORKDIR}"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 do_install() {
-    # install script
-    install -d ${D}/usr/local/sbin
-    install -m 0755 ${WORKDIR}/firstboot-user.sh ${D}/usr/local/sbin/firstboot-user.sh
+    # install normal scripts
+    install -d ${D}/usr/local/sbin/yoctianos
+    install -m 0755 ${WORKDIR}/global-user.sh ${D}/usr/local/sbin/yoctianos/global-user.sh
+    install -m 0755 ${WORKDIR}/global-time.sh ${D}/usr/local/sbin/yoctianos/global-time.sh
+    install -m 0755 ${WORKDIR}/global-misc.sh ${D}/usr/local/sbin/yoctianos/global-misc.sh
+    install -m 0755 ${WORKDIR}/firstboot-apt.sh ${D}/usr/local/sbin/yoctianos/firstboot-apt.sh
+    install -m 0755 ${WORKDIR}/config-apt.sh ${D}/usr/local/sbin/yoctianos/config-apt.sh
 
-    # install systemd unit
-    install -d ${D}${sysconfdir}/systemd/system
-    install -m 0644 ${WORKDIR}/firstboot-user.service ${D}${sysconfdir}/systemd/system/firstboot-user.service
+    # install profile.d unit
+    install -d ${D}${sysconfdir}/profile.d
+    install -m 0755 ${WORKDIR}/yoctianos-first-login.sh ${D}${sysconfdir}/profile.d/yoctianos-first-login.sh
+
+    # install root user script unit
+    install -d ${D}${sysconfdir}/home/root
+    install -m 0755 ${WORKDIR}/yoctianos-setup.sh ${D}$/home/root/yoctianos-setup.sh
 }
 
-FILES:${PN} += "/usr/local/sbin/firstboot-user.sh \
-                ${sysconfdir}/systemd/system/firstboot-user.service"
-
-SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE:${PN} = "firstboot-user.service"
+FILES:${PN} += "/home/root/yoctianos-setup.sh \
+		/usr/local/sbin/yoctianos/global-user.sh \
+		/usr/local/sbin/yoctianos/global-time.sh \
+		/usr/local/sbin/yoctianos/global-misc.sh \
+		/usr/local/sbin/yoctianos/firstboot-apt.sh \
+		/usr/local/sbin/yoctianos/config-apt.sh \
+                ${sysconfdir}/profile.d/yoctianos-first-login.sh"
 
 # Enable sshd at image creation if the sshd unit exists in the rootfs
 do_install:append() {
