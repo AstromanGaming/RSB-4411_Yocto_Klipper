@@ -1,4 +1,4 @@
-DESCRIPTION = "Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
+DESCRIPTION = "Klipper Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
 PN = "yoctianos-arm-none-eabi"
 PV = "0.01"
 PR = "r0"
