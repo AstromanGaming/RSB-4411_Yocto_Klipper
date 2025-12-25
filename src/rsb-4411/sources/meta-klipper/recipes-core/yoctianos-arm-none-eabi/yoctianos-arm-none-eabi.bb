@@ -7,19 +7,19 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 SRC_URI = " \
-     \
+    https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
     file://LICENSE \
 "
 
-# Checksum for the tar.xz archive
-SRC_URI[sha256sum] = ""
+# Checksum for the tar.xz archive (associate the URL with its sha256)
+SRC_URI[sha256sum] = "https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz=8402db78d8b9f5aaa9a75265c3f730308b3b9162dc63c4817ee8012ca6071da3"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi,
 # point S there to simplify do_install paths.
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 do_install() {
-    install -d -m 0777 ${D}/opt/yoctianos-arm-none-eabi
+    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
 
     # Copy extracted content
     if [ -d "${S}" ]; then
