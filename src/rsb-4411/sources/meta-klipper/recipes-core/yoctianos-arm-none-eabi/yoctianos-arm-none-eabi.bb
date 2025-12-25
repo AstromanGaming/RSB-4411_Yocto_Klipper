@@ -45,6 +45,11 @@ FILES_${PN} = " \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
 
+# ensure all toolchain files are shipped
+FILES_${PN} += " \
+    /opt/yoctianos-arm-none-eabi/* \
+"
+
 # This is a prebuilt external toolchain, not a target package
 INHIBIT_DEFAULT_DEPS = "1"
 RDEPENDS_${PN} = ""
