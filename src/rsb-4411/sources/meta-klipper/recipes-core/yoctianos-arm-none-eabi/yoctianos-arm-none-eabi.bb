@@ -25,7 +25,7 @@ do_install() {
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
-        cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi/
+        cp -a ${S}/ ${D}/opt/yoctianos-arm-none-eabi/
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
@@ -41,7 +41,7 @@ EOF
 }
 
 FILES_${PN} = " \
-    /opt/yoctianos-arm-none-eabi/* \
+    /opt/yoctianos-arm-none-eabi \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
 
