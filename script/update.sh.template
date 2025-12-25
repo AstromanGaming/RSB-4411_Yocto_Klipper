@@ -2,8 +2,4 @@
 
 git pull
 
-screen -X -S yoctianos quit
-
-cd ./
-
-sh ./launcher.sh
+screen -X -S yoctianos quit && echo "TEST"
