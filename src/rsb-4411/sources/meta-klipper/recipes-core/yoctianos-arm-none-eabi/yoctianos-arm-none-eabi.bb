@@ -7,11 +7,11 @@ PR = "r0"
 FILESEXTRAPATHS:prepend = "${THISDIR}/files:"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
+LIC_FILES_CHKSUM = "file://yoctianos-arm-none-eabi/LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 		
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
-    file://LICENSE \
+    file://yoctianos-arm-none-eabi/LICENSE \
 "
 
 SRC_URI[sha256sum] = "25e9c10c6996964a136d54acf63d11bf41d01e5882fb490d9681cc0621b96ba2"
