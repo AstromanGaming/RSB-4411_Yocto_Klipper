@@ -7,4 +7,4 @@ SRC_URI = " \
 PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-DEPENDS:append = " linux-libc-headers-native"
+DEPENDS:append = " linux-libc-headers"
