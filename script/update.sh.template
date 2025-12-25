@@ -1,5 +1,9 @@
 #!/bin/sh
 
-git pull
-exit 1
+if ! git pull; then
+    echo "git pull KO, arrêt complet."
+    kill $$
+fi
+
 ./launcher.sh
+
