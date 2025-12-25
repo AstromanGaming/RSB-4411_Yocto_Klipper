@@ -10,3 +10,15 @@ SRCREV = "${AUTOREV}"
 EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*"
 
 DEPENDS:append = " linux-libc-headers glibc"
+
+do_install:append() {
+    if [ -d "${D}${datadir}/lua" ]; then
+        rm -rf "${D}${datadir}/lua/5.*" || true
+        rmdir --ignore-fail-on-non-empty "${D}${datadir}/lua" 2>/dev/null || true
+    fi
+
+    if [ -d "${D}${libdir}/lua" ]; then
+        rm -rf "${D}${libdir}/lua/5.*" || true
+        rmdir --ignore-fail-on-non-empty "${D}${libdir}/lua" 2>/dev/null || true
+    fi
+}
