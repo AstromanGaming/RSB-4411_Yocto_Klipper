@@ -67,4 +67,4 @@ RDEPENDS_${PN} = ""
 RRECOMMENDS_${PN} = ""
 
 # Skip QA checks that do not apply to external toolchains
-INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
+INSANE_SKIP:${PN} += "installed-vs-shipped already-stripped staticdev dev-so file-rdeps ldflags"
