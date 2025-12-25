@@ -9,6 +9,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
+FILESEXTRAPATHS:append := "${THISDIR}/../:"
+
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
 "
@@ -43,18 +45,6 @@ FILES_${PN} = " \
     /opt/yoctianos-arm-none-eabi \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
-
-# If LICENSE is present inside the extracted tree (S), copy it to license-destdir
-# so do_populate_lic can find it during QA.
-do_populate_lic:prepend() {
-    if [ -f "${S}/LICENSE" ]; then
-        bbnote "Copying LICENSE from ${S} to license-destdir for QA"
-        mkdir -p ${WORKDIR}/license-destdir/${PN}
-        cp -a ${S}/LICENSE ${WORKDIR}/license-destdir/${PN}/LICENSE
-    else
-        bbwarn "No LICENSE found in ${S}; do_populate_lic will use LIC_FILES_CHKSUM path"
-    fi
-}
 
 # This is a prebuilt external toolchain, not a target package
 INHIBIT_DEFAULT_DEPS = "1"
