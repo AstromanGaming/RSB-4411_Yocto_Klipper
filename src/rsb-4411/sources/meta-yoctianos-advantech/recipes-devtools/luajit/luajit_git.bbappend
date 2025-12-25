@@ -6,7 +6,7 @@ PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
 # Ensure host build uses sysroot headers
-EXTRA_OEMAKE_append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/asm'"
+EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/asm'"
 
 # Avoid LTO issues
 TARGET_CFLAGS:remove = "-flto"
