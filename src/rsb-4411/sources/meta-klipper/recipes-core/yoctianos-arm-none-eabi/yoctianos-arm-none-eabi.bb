@@ -18,10 +18,10 @@ SRC_URI[sha256sum] = "25e9c10c6996964a136d54acf63d11bf41d01e5882fb490d9681cc0621
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi,
 # set S accordingly to simplify do_install paths.
-S = "${WORKDIR}/src/yoctianos-arm-none-eabi/"
+S = "${WORKDIR}/yoctianos-arm-none-eabi/"
 
 do_install() {
-    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
+    install -d ${D}${sysconfdir}
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
