@@ -25,7 +25,7 @@ do_install() {
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
-        cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi/
+        rsync -a --delete --exclude='LICENSE' "${S}/" "${D}/opt/yoctianos-arm-none-eabi/"
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
