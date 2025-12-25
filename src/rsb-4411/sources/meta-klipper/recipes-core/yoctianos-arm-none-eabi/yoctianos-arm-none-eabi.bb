@@ -46,7 +46,7 @@ FILES_${PN} = " \
 
 # If LICENSE is present inside the extracted tree (S), copy it to license-destdir
 # so do_populate_lic can find it during QA.
-do_populate_lic_prepend() {
+do_populate_lic:prepend() {
     if [ -f "${S}/LICENSE" ]; then
         bbnote "Copying LICENSE from ${S} to license-destdir for QA"
         mkdir -p ${WORKDIR}/license-destdir/${PN}
