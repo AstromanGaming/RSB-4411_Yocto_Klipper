@@ -5,7 +5,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 PV = "git${SRCPV}"
-SRC_URI = "git://github.com/YoctianOS/YoctianOS-Klipper-Addon.git;protocol=https;branch=rsb-4411"
+SRC_URI = "git://github.com/YoctianOS/YoctianOS-Klipper-Addon.git;protocol=https;branch=dev/rsb-4411"
 SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
