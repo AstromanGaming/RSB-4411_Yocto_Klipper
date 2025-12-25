@@ -1,18 +1,7 @@
 #!/bin/sh
 
-PARENT_PID=$1
+git pull
 
-OUTPUT=$(git pull)
+screen -X -S yoctianos quit
 
-echo "$OUTPUT"
-
-echo "$OUTPUT" | grep -q "Already up to date"
-if [ $? -eq 0 ]; then
-    exit 0
-fi
-
-echo "Mise à jour détectée — arrêt de 1.sh"
-kill "$PARENT_PID"
-
-exit 0
-
+./launcher.sh
