@@ -13,7 +13,7 @@ SRC_URI = " \
 "
 
 # Checksum for the tar.xz archive (associate the URL with its sha256)
-SRC_URI[sha256sum] = "8402db78d8b9f5aaa9a75265c3f730308b3b9162dc63c4817ee8012ca6071da3"
+SRC_URI[sha256sum] = "25e9c10c6996964a136d54acf63d11bf41d01e5882fb490d9681cc0621b96ba2"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi,
 # point S there to simplify do_install paths.
