@@ -11,14 +11,16 @@ EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STA
 
 DEPENDS:append = " linux-libc-headers glibc"
 
-do_install:append() {
+# Make do_install robust: don't fail if those lua dirs are absent
+do_install_append() {
+    # remove any versioned lua dirs if they exist, ignore errors otherwise
     if [ -d "${D}${datadir}/lua" ]; then
         rm -rf "${D}${datadir}/lua/5.*" || true
-        rmdir --ignore-fail-on-non-empty "${D}${datadir}/lua" 2>/dev/null || true
+        rmdir "${D}${datadir}/lua" 2>/dev/null || true
     fi
 
     if [ -d "${D}${libdir}/lua" ]; then
         rm -rf "${D}${libdir}/lua/5.*" || true
-        rmdir --ignore-fail-on-non-empty "${D}${libdir}/lua" 2>/dev/null || true
+        rmdir "${D}${libdir}/lua" 2>/dev/null || true
     fi
 }
