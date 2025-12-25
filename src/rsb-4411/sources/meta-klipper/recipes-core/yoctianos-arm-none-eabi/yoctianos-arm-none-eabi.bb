@@ -5,7 +5,7 @@ PR = "r0"
 
 #FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-#LICENSE = "MIT"
+LICENSE = "MIT"
 #LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 SRC_URI = " \
