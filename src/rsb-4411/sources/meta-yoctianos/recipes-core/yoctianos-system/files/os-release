@@ -1,5 +1,5 @@
 NAME="YoctianOS DEV"
-VERSION="0.00"
+VERSION="0.01"
 ID=yoctianos
-PRETTY_NAME="YoctianOS DEV 0.00"
+PRETTY_NAME="YoctianOS DEV 0.01"
 HOME_URL="https://github.com/YoctianOS/YoctianOS-Distro"
