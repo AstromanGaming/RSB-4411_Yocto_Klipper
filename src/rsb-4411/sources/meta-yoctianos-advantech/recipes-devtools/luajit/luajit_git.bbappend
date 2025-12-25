@@ -17,7 +17,7 @@ TARGET_CFLAGS:remove = "-flto"
 HOST_CFLAGS:remove = "-flto"
 
 # Ensure the environment is exported for the make invocation (robust fallback)
-do_compile_prepend() {
+do_compile:prepend() {
     export HOST_CC="${HOST_CC}"
     export HOST_CFLAGS="${BUILD_CFLAGS} -I${STAGING_INCDIR_NATIVE} -I${STAGING_INCDIR_NATIVE}/gnu"
     export HOST_LDFLAGS="${HOST_LDFLAGS}"
