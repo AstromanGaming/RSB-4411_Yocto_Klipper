@@ -31,18 +31,18 @@ do_install() {
     install -d ${D}${sysconfdir}/profile.d
     install -m 0755 ${WORKDIR}/yoctianos-first-login.sh ${D}${sysconfdir}/profile.d/yoctianos-first-login.sh
 
-    # install root user script unit
-    install -d ${D}${sysconfdir}/home/root
-    install -m 0755 ${WORKDIR}/yoctianos-setup.sh ${D}$/home/root/yoctianos-setup.sh
+    # install root user script into /root
+    install -d ${D}/root
+    install -m 0755 ${WORKDIR}/yoctianos-setup.sh ${D}/root/yoctianos-setup.sh
 }
 
-FILES:${PN} += "/home/root/yoctianos-setup.sh \
-		/usr/local/sbin/yoctianos/global-user.sh \
-		/usr/local/sbin/yoctianos/global-time.sh \
-		/usr/local/sbin/yoctianos/global-misc.sh \
-		/usr/local/sbin/yoctianos/firstboot-apt.sh \
-		/usr/local/sbin/yoctianos/config-apt.sh \
-                ${sysconfdir}/profile.d/yoctianos-first-login.sh"
+FILES:${PN} += "/root/yoctianos-setup.sh \
+        /usr/local/sbin/yoctianos/global-user.sh \
+        /usr/local/sbin/yoctianos/global-time.sh \
+        /usr/local/sbin/yoctianos/global-misc.sh \
+        /usr/local/sbin/yoctianos/firstboot-apt.sh \
+        /usr/local/sbin/yoctianos/config-apt.sh \
+        ${sysconfdir}/profile.d/yoctianos-first-login.sh"
 
 # Enable sshd at image creation if the sshd unit exists in the rootfs
 do_install:append() {

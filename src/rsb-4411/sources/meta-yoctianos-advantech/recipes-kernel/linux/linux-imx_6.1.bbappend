@@ -1,3 +1,4 @@
+# Use YoctianOS i.MX Linux
 KERNEL_SRC = "git://github.com/YoctianOS/linux-imx.git;protocol=https"
 SRCBRANCH = "adv_6.1.22_2.0.0"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"

@@ -1,3 +1,4 @@
+# Git fix because it's obsolete
 LIC_FILES_CHKSUM = "file://COPYRIGHT;md5=d421a5e2a24207f5e260537399a9a38b"
 
 SRC_URI = " \
@@ -7,6 +8,7 @@ SRC_URI = " \
 PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
+# Fixes some bugs
 EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*"
 
 DEPENDS:append = " linux-libc-headers glibc"

@@ -1,3 +1,4 @@
+# Major Fix
 install_utils() {
     mkdir -p ${IMAGE_ROOTFS}/usr/local/bin
     install -m 0755 ${ADDON_FILES_DIR}/bt_pair.sh ${IMAGE_ROOTFS}/usr/local/bin
