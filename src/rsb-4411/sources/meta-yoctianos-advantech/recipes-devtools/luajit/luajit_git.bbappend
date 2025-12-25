@@ -5,10 +5,9 @@ SRC_URI = "git://luajit.org/git/luajit-2.0.git;protocol=http;branch=v2.1"
 PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-# Fix host build: use Yocto sysroot headers instead of /usr/include
-HOST_CFLAGS = "${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/asm"
-HOST_LDFLAGS = "${BUILD_LDFLAGS}"
+# Ensure host build uses sysroot headers
+EXTRA_OEMAKE_append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/asm'"
 
-# LuaJIT hates LTO
+# Avoid LTO issues
 TARGET_CFLAGS:remove = "-flto"
 HOST_CFLAGS:remove = "-flto"
