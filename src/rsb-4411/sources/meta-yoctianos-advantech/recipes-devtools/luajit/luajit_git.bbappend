@@ -9,9 +9,9 @@ PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
 # Fixes some bugs
-EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*"
+EXTRA_OEMAKE += " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*"
 
-DEPENDS:append = " linux-libc-headers glibc"
+DEPENDS = " linux-libc-headers glibc"
 
 do_install () {
     oe_runmake ${EXTRA_OEMAKEINST} install
