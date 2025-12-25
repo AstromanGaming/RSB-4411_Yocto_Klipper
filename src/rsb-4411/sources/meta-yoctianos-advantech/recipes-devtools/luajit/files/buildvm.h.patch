@@ -1,5 +1,5 @@
---- a/buildvm.h
-+++ b/buildvm.h
+--- a/src/host/buildvm.h
++++ b/src/host/buildvm.h
 @@ -10,7 +10,18 @@
  #include <stdio.h>
  #include <stdlib.h>
