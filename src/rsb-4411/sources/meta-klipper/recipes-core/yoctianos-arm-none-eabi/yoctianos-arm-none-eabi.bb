@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
-    file://LICENSE
+    file://LICENSE \
 "
 
 # Checksum for the tar.xz archive (associate the URL with its sha256)
