@@ -11,21 +11,28 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 		
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
-    file://LICENSE \
+    file://yoctianos-arm-none-eabi/LICENSE \
 "
 
 SRC_URI[sha256sum] = "25e9c10c6996964a136d54acf63d11bf41d01e5882fb490d9681cc0621b96ba2"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi,
 # set S accordingly to simplify do_install paths.
-S = "${WORKDIR}/yoctianos-arm-none-eabi/"
+S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 do_install() {
-    install -d ${D}${sysconfdir}
+    # ensure destination exists
+    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
 
-    # Copy extracted content into the package destination
+    # Copy extracted content into the package destination, excluding LICENSE
     if [ -d "${S}" ]; then
-        cp -a ${S}/ ${D}/opt/yoctianos-arm-none-eabi/
+        # Prefer rsync if available for correct permissions and symlink handling
+        if command -v rsync >/dev/null 2>&1; then
+            rsync -a --delete --exclude='LICENSE' "${S}/" "${D}/opt/yoctianos-arm-none-eabi/"
+        else
+            # Portable fallback using tar to preserve permissions and symlinks
+            tar -C "${S}" --exclude='LICENSE' -cf - . | tar -C "${D}/opt/yoctianos-arm-none-eabi" -xpf -
+        fi
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
@@ -38,7 +45,16 @@ do_install() {
 export PATH=/opt/yoctianos-arm-none-eabi/bin:$PATH
 EOF
     chmod 0755 ${D}/etc/profile.d/yoctianos-arm-none-eabi.sh
+
+    # Normalize ownership and permissions to avoid host-owned files in package
+    chown -R 0:0 ${D}/opt/yoctianos-arm-none-eabi || true
+    find ${D}/opt/yoctianos-arm-none-eabi -type d -exec chmod 0755 {} \; || true
+    find ${D}/opt/yoctianos-arm-none-eabi -type f -exec chmod 0644 {} \; || true
+    if [ -d "${D}/opt/yoctianos-arm-none-eabi/bin" ]; then
+        find ${D}/opt/yoctianos-arm-none-eabi/bin -type f -exec chmod 0755 {} \; || true
+    fi
 }
+
 
 FILES_${PN} = " \
     /opt/yoctianos-arm-none-eabi \
