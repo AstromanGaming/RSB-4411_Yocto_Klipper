@@ -25,7 +25,7 @@ SCRIPT_PATH=$(find . -type f -name "$SCRIPT_NAME" | head -n 1)
 if [ -f "$SCRIPT_PATH" ]; then
   chmod +x "$SCRIPT_PATH"
   echo "Launching $SCRIPT_NAME..."
-  screen -dmS yoctianos bash "$SCRIPT_PATH"
+  screen -dmS yoctianos -h 10000 bash "$SCRIPT_PATH"
   screen -r yoctianos
 else
   echo "Script '$SCRIPT_NAME' not found."
