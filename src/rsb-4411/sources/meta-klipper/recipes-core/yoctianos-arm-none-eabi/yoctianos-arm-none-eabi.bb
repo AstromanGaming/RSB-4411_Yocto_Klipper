@@ -41,7 +41,7 @@ EOF
 }
 
 # Normalize ownership and permissions to avoid host-owned files in package
-do_install_append() {
+do_install:append() {
     # ensure ownership is root:root for packaging and sstate hashing
     chown -R 0:0 ${D}/opt/yoctianos-arm-none-eabi || true
 
@@ -62,7 +62,7 @@ FILES_${PN} = " \
 
 # If LICENSE is present inside the extracted tree (S), copy it to license-destdir
 # so do_populate_lic can find it during QA. Also prefer recipe files/ LICENSE if present.
-do_populate_lic_prepend() {
+do_populate_lic:prepend() {
     mkdir -p ${WORKDIR}/license-destdir/${PN}
 
     if [ -f "${THISDIR}/files/LICENSE" ]; then
