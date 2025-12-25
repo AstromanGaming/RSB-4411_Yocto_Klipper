@@ -41,13 +41,8 @@ EOF
 }
 
 FILES_${PN} = " \
-    /opt/yoctianos-arm-none-eabi \
-    /etc/profile.d/yoctianos-arm-none-eabi.sh \
-"
-
-# ensure all toolchain files are shipped
-FILES_${PN} += " \
     /opt/yoctianos-arm-none-eabi/* \
+    /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
 
 # This is a prebuilt external toolchain, not a target package
