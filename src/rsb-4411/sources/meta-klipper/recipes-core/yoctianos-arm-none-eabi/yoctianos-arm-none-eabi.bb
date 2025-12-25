@@ -25,7 +25,7 @@ do_install() {
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
-        cp -a ${S}/ ${D}/opt/yoctianos-arm-none-eabi/
+        cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi/
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
@@ -51,4 +51,4 @@ RDEPENDS_${PN} = ""
 RRECOMMENDS_${PN} = ""
 
 # Skip QA checks that do not apply to external toolchains
-INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
+INSANE_SKIP:${PN} += "installed-vs-shipped already-stripped staticdev dev-so file-rdeps ldflags"
