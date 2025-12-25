@@ -1,5 +1,5 @@
 #!/bin/sh
 
 git pull
-exit
+exit 0
 ./launcher.sh
