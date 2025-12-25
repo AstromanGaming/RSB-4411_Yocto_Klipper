@@ -1,9 +1,18 @@
 #!/bin/sh
 
-if ! git pull; then
-    echo "git pull KO, arrêt complet."
-    kill $$
+PARENT_PID=$1
+
+OUTPUT=$(git pull)
+
+echo "$OUTPUT"
+
+echo "$OUTPUT" | grep -q "Already up to date"
+if [ $? -eq 0 ]; then
+    exit 0
 fi
 
-./launcher.sh
+echo "Mise à jour détectée — arrêt de 1.sh"
+kill "$PARENT_PID"
+
+exit 0
 
