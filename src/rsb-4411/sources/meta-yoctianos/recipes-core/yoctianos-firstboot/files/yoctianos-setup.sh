@@ -3,6 +3,8 @@ set -e
 
 YOCTIANOS_FILE="/etc/.yoctianos"
 
+sed -i 's/restart="true"/restart="false"/' /etc/.yoctianos
+
 # Ensure script is run as root user
 if [ "$(id -u)" -ne 0 ]; then
     echo "ERROR: This script must be run as root. Aborting."
@@ -38,6 +40,44 @@ get_install_status() {
     esac
 }
 
+wait_for_cancel() {
+    # $1 = seconds
+    seconds="$1"
+
+    echo "Press any key to cancel"
+
+    # Make input non-blocking
+    stty -icanon -echo min 0 time 0
+
+    while [ "$seconds" -gt 0 ]; do
+        printf "%s\n" "$seconds"
+        sleep 1
+
+        # If a key is pressed, cancel
+        if read -r -n 1 key; then
+            echo "Cancelled."
+            # Restore terminal settings
+            stty sane
+            exit 0
+        fi
+
+        seconds=$((seconds - 1))
+    done
+
+    # Restore terminal settings
+    stty sane
+}
+
+reboot() {
+    if [ -f /etc/.yoctianos ] && grep -q 'restart="true"' /etc/.yoctianos; then
+        echo "Restart recommended"
+        wait_for_cancel 10
+        echo "Rebooting..."
+        sleep 1
+        reboot
+    fi
+}
+
 # --- Main logic --------------------------------------------------------------
 
 INSTALL_STATUS="$(get_install_status)"
@@ -60,7 +100,9 @@ if [ "$INSTALL_STATUS" = "false" ]; then
     run_scripts "/usr/local/sbin/yoctianos/addon/firstboot-*.sh"
 
     set_install_flag
+
     echo "Done!"
+    reboot
     exit 0
 else
     echo "1. Configuration: System"
@@ -80,5 +122,6 @@ else
     run_scripts "/usr/local/sbin/yoctianos/addon/config-*.sh"
 
     echo "Done!"
+    reboot
     exit 0
 fi

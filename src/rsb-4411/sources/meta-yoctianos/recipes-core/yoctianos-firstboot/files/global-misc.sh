@@ -10,6 +10,44 @@ fi
 echo
 echo "=== YoctianOS Setup: System ==="
 
+# Prompt and apply a root password
+printf "Do you want to set/change the root password now? [y/N]: "
+read -r REPLY
+if [ "${REPLY,,}" = "y" ]; then
+    # Secure password entry and confirmation
+    while :; do
+        printf "New root password: "
+        read -r -s PASS
+        echo
+        printf "Confirm password: "
+        read -r -s PASS2
+        echo
+        if [ -z "$PASS" ]; then
+            echo "Password cannot be empty. Try again."
+            continue
+        fi
+        if [ "$PASS" != "$PASS2" ]; then
+            echo "Passwords do not match. Try again."
+            continue
+        fi
+        break
+    done
+
+    # Apply the password in the safest portable way possible
+    if command -v chpasswd >/dev/null 2>&1; then
+        printf 'root:%s\n' "$PASS" | chpasswd
+        echo "Root password updated with chpasswd."
+    else
+        echo "chpasswd not found. Falling back to interactive passwd."
+        passwd root || echo "passwd failed. Please set the password manually."
+    fi
+
+    # Clear sensitive variables
+    PASS=""
+    PASS2=""
+    unset PASS PASS2
+fi
+
 # Hostname (optional)
 printf "Hostname (leave empty to keep the existing one): "
 read -r NEWHOST

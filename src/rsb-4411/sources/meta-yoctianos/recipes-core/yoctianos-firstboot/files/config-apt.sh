@@ -8,6 +8,7 @@ set -euo pipefail
 # - Does not modify /etc/.yoctianos
 # - No logging to /var/log
 
+YOCTIAN_FILE="/etc/.yoctianos"
 YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
 BACKUP_DIR="/var/backups/yoctianos"
 TMP_DIR="$(mktemp -d /tmp/yoctianos-apt.XXXXXX)"
@@ -15,6 +16,19 @@ TMP_OLD="$TMP_DIR/yoctianos.list.old"
 TMP_NEW="$TMP_DIR/yoctianos.list.new"
 TMP_CLEAN="$TMP_DIR/yoctianos.list.clean"
 EDITOR="${EDITOR:-vi}"
+
+get_public_status() {
+    if [ ! -f "$YOCTIAN_FILE" ]; then
+        echo "false"
+        return
+    fi
+
+    case "$(grep -o 'public="[^"]*"' "$YOCTIAN_FILE" | cut -d'"' -f2)" in
+        true)  echo "true" ;;
+        false) echo "false" ;;
+        *)     echo "false" ;; # default fallback
+    esac
+}
 
 cleanup() {
     rm -rf "$TMP_DIR"
@@ -30,6 +44,10 @@ die() {
 # Must be root
 if [ "$(id -u)" -ne 0 ]; then
     die "This script must be run as root."
+fi
+
+if [ -f /etc/.yoctianos ] && grep -q 'install="false"' /etc/.yoctianos; then
+    die "Error: You can not execute it. Aborting."
 fi
 
 # Helper trim
@@ -170,7 +188,7 @@ case "$ACTION" in
                         printf "deb %s ./\n" "$url" >> "$TMP_NEW"
                     fi
                 else
-                    if command -v dpkg >/dev/null 2>&1; then
+                    if command -v dpkg >/dev/null 2>&1; thenYOCTIANOS_FILE="/etc/.yoctianos"
                         arch="$(dpkg --print-architecture 2>/dev/null || true)"
                     else
                         arch=""
@@ -183,6 +201,20 @@ case "$ACTION" in
                 fi
             done; IFS="$OLDIFS"
         done
+
+	PUBLIC_STATUS="$(get_public_status)"
+
+        if [ "$PUBLIC_STATUS" = "false" ]; then
+		printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
+		read -r PUBLICREPO
+		PUBLICREPO="$(_trim "$PUBLICREPO")"
+		if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
+	  	  curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
+  		  echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
+		else
+   		  echo "Skipping default online APT repo configuration."
+                fi
+	fi
         ;;
 esac
 
@@ -213,7 +245,7 @@ echo "----------------------------------------"
 nl -ba "$YOCTIAN_LIST"
 echo "----------------------------------------"
 
-echo "Running apt-get update..."
+echo "Update all APT repesitories..."
 if command -v apt-get >/dev/null 2>&1; then
     apt-get update || true
 fi

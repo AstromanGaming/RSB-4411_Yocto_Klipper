@@ -1,2 +1,8 @@
+#If YoctianOS setup is done
 install="false"
+
+#If the web repo is installed
+public="false"
+
+#If YoctianOS need a temporary restart
 restart="false"

@@ -222,4 +222,4 @@ grant_sudo_for_user "$USER" || echo "Warning: failed to fully configure sudo for
 # Verify the user has sudo privileges; exit if verification fails
 verify_user_in_sudo "$USER"
 
-echo "User setup complete! User '${USER}' created or reconfigured."
+echo "User setup complete!"

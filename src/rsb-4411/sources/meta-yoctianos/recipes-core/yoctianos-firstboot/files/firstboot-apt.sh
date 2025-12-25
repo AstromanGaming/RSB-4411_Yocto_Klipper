@@ -1,14 +1,27 @@
 #!/bin/sh
 set -e
 
+export PRIVATE=false
+
 # This script must be run as root user.
 if [ "$(id -u)" -ne 0 ]; then
     echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi
 
+if [ -f /etc/.yoctianos ] && grep -q 'install="true"' /etc/.yoctianos; then
+    echo "Error: You can not execute it. Aborting."
+    exit 1
+fi
+
 echo
 echo "=== YoctianOS Setup: APT ==="
+
+set_public_flag() {
+    if [ -f "$YOCTIANOS_FILE" ]; then
+        sed -i 's/public="false"/public="true"/' "$YOCTIANOS_FILE"
+    fi
+}
 
 # Helper to trim whitespace
 _trim() {
@@ -32,7 +45,7 @@ _cleanup_tmp() {
 trap _cleanup_tmp EXIT HUP INT TERM
 
 echo
-printf "Adding APT repositories is recommended. Add repos now? [Y/n]: "
+printf "Adding Mirror and/or Local APT repositories, it's recommended. Add repos now? [Y/n]: "
 read -r ADDREPOS
 ADDREPOS="$(_trim "$ADDREPOS")"
 if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
@@ -113,17 +126,33 @@ if [ -z "$ADDREPOS" ] || echo "$ADDREPOS" | grep -iq '^y'; then
         fi
         chmod 0644 "$YOCTIAN_LIST"
         echo "Added repos to $YOCTIAN_LIST"
-
-        if command -v apt-get >/dev/null 2>&1; then
-            apt-get update || true
-        fi
+        export UPDATE=true
     else
         [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
         echo "No repos added."
     fi
 else
     [ -n "$TMP_LIST" ] && rm -f "$TMP_LIST"
-    echo "Skipping APT repo configuration (recommended step skipped)."
+    echo "Skipping Mirror and/or Local APT repo configuration."
+fi
+
+echo
+printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
+read -r PUBLICREPO
+if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
+    curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
+    echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
+    set_public_flag
+    export UPDATE=true
+else
+    echo "Skipping default online APT repo configuration."
+fi
+
+if [ -z "$PRIVATE" ] || echo "$PRIVATE" | grep -iq 'true'; then
+    echo "Update all APT repesitories..."
+    if command -v apt-get >/dev/null 2>&1; then
+        apt-get update || true
+    fi
 fi
 
 echo "APT setup complete!"
