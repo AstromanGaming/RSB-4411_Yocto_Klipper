@@ -9,7 +9,7 @@ SRCREV = "${AUTOREV}"
 
 EXTRA_OEMAKE:append = " HOST_CFLAGS='-I${STAGING_INCDIR_NATIVE} -I${STAGING_INCDIR_NATIVE}/linux'"
 
-do_compile_prepend() {
+do_compile:prepend() {
     export HOST_CFLAGS="-I${STAGING_INCDIR_NATIVE} -I${STAGING_INCDIR_NATIVE}/linux ${HOST_CFLAGS}"
     bbnote "HOST_CFLAGS=${HOST_CFLAGS}"
 }
