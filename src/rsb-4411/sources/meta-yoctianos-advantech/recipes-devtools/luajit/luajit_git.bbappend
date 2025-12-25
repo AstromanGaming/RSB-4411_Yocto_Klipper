@@ -7,4 +7,6 @@ SRC_URI = " \
 PV = "git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*'"
+EXTRA_OEMAKE:append = " HOST_CFLAGS='${BUILD_CFLAGS} -I${STAGING_INCDIR} -I${STAGING_INCDIR}/*"
+
+DEPENDS:append = " linux-libc-headers glibc"
