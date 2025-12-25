@@ -6,7 +6,7 @@ PACKAGECONFIG:remove:pn-mpv = "opengl gl-x11 vdpau-gl-x11"
 PACKAGECONFIG:append:pn-mpv = " egl gles2 x11"
 
 # Force-disable GLX in case anything tries to re-add it
-EXTRA_OECONF:append:pn-mpv = " --disable-gl-x11"
+EXTRA_OECONF:append:pn-mpv = " --disable-gl-x11 --disable-lua"
 
 # Also remove any GLX flags the recipe may have appended
 EXTRA_OECONF:remove:pn-mpv = "--enable-gl-x11"
