@@ -4,7 +4,7 @@ PV = "0.01"
 PR = "r0"
 
 # Add the recipe's files/ directory to the file:// search path
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
