@@ -4,4 +4,6 @@ git pull
 
 screen -X -S yoctianos quit
 
-./launcher.sh
+cd ./
+
+sh ./launcher.sh
