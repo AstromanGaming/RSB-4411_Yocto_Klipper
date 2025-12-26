@@ -1,5 +1,4 @@
 #!/bin/sh
-set -euo pipefail
 
 YOCTIAN_FILE="/etc/.yoctianos"
 YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
@@ -35,7 +34,7 @@ die() {
 }
 
 # Must be root user
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$(whoami)" = "root" ]; then
     die "This script must be run as root user."
 fi
 
@@ -181,7 +180,7 @@ case "$ACTION" in
                         printf "deb %s ./\n" "$url" >> "$TMP_NEW"
                     fi
                 else
-                    if command -v dpkg >/dev/null 2>&1; thenYOCTIANOS_FILE="/etc/.yoctianos"
+                    if command -v dpkg >/dev/null 2>&1; then
                         arch="$(dpkg --print-architecture 2>/dev/null || true)"
                     else
                         arch=""

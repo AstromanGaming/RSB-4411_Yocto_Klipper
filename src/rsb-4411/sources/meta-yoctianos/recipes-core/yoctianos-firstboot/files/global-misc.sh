@@ -1,8 +1,7 @@
 #!/bin/sh
-set -e
 
 # This script must be run as root user.
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$(whoami)" = "root" ]; then
     echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi
@@ -40,41 +39,6 @@ if [ "${REPLY,,}" = "y" ]; then
     else
         echo "chpasswd not found. Falling back to interactive passwd."
         passwd root || echo "passwd failed. Please set the password manually."
-    fi
-
-    # Enable SSH password authentication and allow root login
-    if [ -f /etc/ssh/sshd_config ]; then
-        cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak || true
-
-        # Ensure PasswordAuthentication yes
-        if grep -q '^PasswordAuthentication' /etc/ssh/sshd_config 2>/dev/null; then
-            sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config || true
-        else
-            printf '\n# Allow password authentication for SSH\nPasswordAuthentication yes\n' >> /etc/ssh/sshd_config
-        fi
-
-        # Ensure PermitRootLogin yes
-        if grep -q '^PermitRootLogin' /etc/ssh/sshd_config 2>/dev/null; then
-            sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config || true
-        else
-            printf '\n# Allow root login over SSH\nPermitRootLogin yes\n' >> /etc/ssh/sshd_config
-        fi
-
-        # Ensure ChallengeResponseAuthentication is no (common default)
-        if grep -q '^ChallengeResponseAuthentication' /etc/ssh/sshd_config 2>/dev/null; then
-            sed -i 's/^ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config || true
-        fi
-
-        # Restart sshd if possible
-        if command -v systemctl >/dev/null 2>&1; then
-            systemctl restart sshd 2>/dev/null || systemctl restart ssh 2>/dev/null || true
-        else
-            service ssh restart 2>/dev/null || service sshd restart 2>/dev/null || true
-        fi
-
-        echo "SSH configured to allow password authentication and root login (sshd_config backed up to sshd_config.bak)."
-    else
-        echo "/etc/ssh/sshd_config not found; skipped SSH configuration."
     fi
 
     # Clear sensitive variables

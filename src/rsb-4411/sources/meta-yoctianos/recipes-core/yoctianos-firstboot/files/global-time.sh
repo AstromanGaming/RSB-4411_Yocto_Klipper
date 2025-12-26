@@ -1,5 +1,4 @@
 #!/bin/sh
-set -euo pipefail
 
 CONF_TIMESYNCD="/etc/systemd/timesyncd.conf"
 BACKUP_DIR="/var/backups/yoctianos-time"
@@ -17,7 +16,7 @@ die() {
 }
 
 # Must be root user
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$(whoami)" = "root" ]; then
     die "This script must be run as root user."
 fi
 

@@ -1,12 +1,11 @@
 #!/bin/sh
-set -e
 
 YOCTIANOS_FILE="/etc/.yoctianos"
 
 sed -i 's/restart="true"/restart="false"/' /etc/.yoctianos
 
 # Ensure script is run as root user
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$(whoami)" = "root" ]; then
     echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi

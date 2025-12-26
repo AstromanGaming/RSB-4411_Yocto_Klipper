@@ -1,10 +1,9 @@
 #!/bin/sh
-set -e
 
 export UPDATE=false
 
 # This script must be run as root user.
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$(whoami)" = "root" ]; then
     echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi
