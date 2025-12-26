@@ -17,14 +17,12 @@ S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 do_install() {
     # ensure destination exists
-    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
+    install -d -m 0755 ${D}/opt
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
         install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
         cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi/
-        # remove LICENSE if it was copied; keep LICENSE out of /opt
-        rm -f ${D}/opt/yoctianos-arm-none-eabi/LICENSE
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
