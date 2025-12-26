@@ -81,15 +81,16 @@ verify_user_in_sudo() {
         return 0
     fi
 
-    echo "User '$u' does not appear to have sudo privileges. Attempting to add to 'sudo' or 'wheel' group..."
+    echo "User '$u' does not appear to have sudo privileges. Attempting to add to 'sudo' group..."
 
     # Try to add to sudo or wheel group if present
     if getent group sudo >/dev/null 2>&1; then
         usermod -a -G sudo "$u" >/dev/null 2>&1 || true
-    elif getent group wheel >/dev/null 2>&1; then
-        usermod -a -G wheel "$u" >/dev/null 2>&1 || true
+        usermod -a -G input "$u" >/dev/null 2>&1 || true
+        usermod -a -G tty "$u" >/dev/null 2>&1 || true
+        usermod -a -G video "$u" >/dev/null 2>&1 || true
     else
-        echo "No 'sudo' or 'wheel' group found on this system. Will check for sudoers file."
+        echo "No 'sudo' group found on this system. Will check for sudoers file."
     fi
 
     # Short pause to allow group membership to update

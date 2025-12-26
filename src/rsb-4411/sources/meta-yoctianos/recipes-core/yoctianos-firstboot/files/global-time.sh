@@ -1,13 +1,6 @@
 #!/bin/sh
 set -euo pipefail
 
-# YoctianOS UTC configuration and reconfiguration script
-# - Run as root
-# - Uses timedatectl for timezone and NTP enable/disable
-# - If systemd-timesyncd exists, can update /etc/systemd/timesyncd.conf
-# - Backs up edited files
-# - Interactive prompts; safe defaults (UTC, enable NTP)
-
 CONF_TIMESYNCD="/etc/systemd/timesyncd.conf"
 BACKUP_DIR="/var/backups/yoctianos-time"
 TMP="$(mktemp -d /tmp/yoctianos-time.XXXXXX)"
@@ -23,9 +16,9 @@ die() {
     exit 1
 }
 
-# Must be root
+# Must be root user
 if [ "$(id -u)" -ne 0 ]; then
-    die "This script must be run as root."
+    die "This script must be run as root user."
 fi
 
 mkdir -p "$BACKUP_DIR"

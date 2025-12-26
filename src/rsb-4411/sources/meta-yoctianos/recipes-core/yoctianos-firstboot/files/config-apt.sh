@@ -1,13 +1,6 @@
 #!/bin/sh
 set -euo pipefail
 
-# YoctianOS interactive APT reconfiguration script (no logging)
-# - Run as root only
-# - Show existing repos, allow add/edit/remove
-# - Backup, dedupe, atomic write
-# - Does not modify /etc/.yoctianos
-# - No logging to /var/log
-
 YOCTIAN_FILE="/etc/.yoctianos"
 YOCTIAN_LIST="/etc/apt/sources.list.d/yoctianos.list"
 BACKUP_DIR="/var/backups/yoctianos"
@@ -41,9 +34,9 @@ die() {
     exit 1
 }
 
-# Must be root
+# Must be root user
 if [ "$(id -u)" -ne 0 ]; then
-    die "This script must be run as root."
+    die "This script must be run as root user."
 fi
 
 if [ -f /etc/.yoctianos ] && grep -q 'install="false"' /etc/.yoctianos; then
@@ -244,11 +237,6 @@ echo "Final YoctianOS repository list:"
 echo "----------------------------------------"
 nl -ba "$YOCTIAN_LIST"
 echo "----------------------------------------"
-
-echo "Update all APT repesitories..."
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get update || true
-fi
 
 echo "APT setup complete!"
 cleanup

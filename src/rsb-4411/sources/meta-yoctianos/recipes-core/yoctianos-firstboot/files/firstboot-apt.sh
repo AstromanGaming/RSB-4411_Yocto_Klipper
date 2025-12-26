@@ -148,7 +148,7 @@ else
     echo "Skipping default online APT repo configuration."
 fi
 
-if [ -z "$PRIVATE" ] || echo "$PRIVATE" | grep -iq 'true'; then
+if [ -z "$UPDATE" ] || echo "$UPDATE" | grep -iq 'true'; then
     echo "Update all APT repesitories..."
     if command -v apt-get >/dev/null 2>&1; then
         apt-get update || true
