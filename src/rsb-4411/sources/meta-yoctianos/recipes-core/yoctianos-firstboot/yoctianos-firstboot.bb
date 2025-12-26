@@ -12,6 +12,7 @@ SRC_URI = "file://yoctianos-setup.sh \
            file://firstboot-apt.sh \
            file://config-apt.sh \
            file://yoctianos-first-login.sh \
+           file://.yoctianos \
            file://LICENSE"
 
 S = "${WORKDIR}"
@@ -31,18 +32,23 @@ do_install() {
     install -d ${D}${sysconfdir}/profile.d
     install -m 0755 ${WORKDIR}/yoctianos-first-login.sh ${D}${sysconfdir}/profile.d/yoctianos-first-login.sh
 
-    # install root user script into /root
-    install -d ${D}/root
-    install -m 0755 ${WORKDIR}/yoctianos-setup.sh ${D}/root/yoctianos-setup.sh
+    # install root user script into /home/root
+    install -d ${D}/home/root
+    install -m 0755 ${WORKDIR}/yoctianos-setup.sh ${D}/home/root/yoctianos-setup.sh
+
+    # install system conf
+    install -d ${D}${sysconfdir}
+    install -m 0644 ${WORKDIR}/.yoctianos ${D}${sysconfdir}/.yoctianos
 }
 
-FILES:${PN} += "/root/yoctianos-setup.sh \
+FILES:${PN} += "/home/root/yoctianos-setup.sh \
         /usr/local/sbin/yoctianos/global-user.sh \
         /usr/local/sbin/yoctianos/global-time.sh \
         /usr/local/sbin/yoctianos/global-misc.sh \
         /usr/local/sbin/yoctianos/firstboot-apt.sh \
         /usr/local/sbin/yoctianos/config-apt.sh \
         ${sysconfdir}/profile.d/yoctianos-first-login.sh"
+        ${sysconfdir}/.yoctianos
 
 # Enable sshd at image creation if the sshd unit exists in the rootfs
 do_install:append() {

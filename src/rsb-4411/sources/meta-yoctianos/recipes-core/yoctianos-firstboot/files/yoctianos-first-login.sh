@@ -13,5 +13,5 @@ esac
 if [ -f /etc/.yoctianos ] && grep -q 'install="true"' /etc/.yoctianos; then
     exit 0
 else
-    sh /root/yoctianos-setup.sh
+    sh /home/root/yoctianos-setup.sh
 fi
