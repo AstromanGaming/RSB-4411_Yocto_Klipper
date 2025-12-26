@@ -17,8 +17,7 @@ S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 inherit allarch
 
-# Ensure the default package exists
-PACKAGES += "${PN}"
+# This is a prebuilt external toolchain, not a target package
 INHIBIT_DEFAULT_DEPS = "1"
 RDEPENDS_${PN} = ""
 RRECOMMENDS_${PN} = ""
@@ -27,7 +26,7 @@ RRECOMMENDS_${PN} = ""
 INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
 
 do_install() {
-    # Ensure destination exists
+    # ensure destination exists
     install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
 
     # Copy extracted content into the package destination
@@ -55,9 +54,10 @@ EOF
     fi
 }
 
-# Explicitly include files under the toolchain directory so QA sees them as shipped
+# Explicitly include files under the toolchain directory so QA sees them as shipped.
+# Use globs to match files (Yocto packages file contents, not empty directories).
 FILES_${PN} = " \
     /opt/yoctianos-arm-none-eabi/* \
-    /opt/yoctianos-arm-none-eabi/bin/* \
+    /opt/yoctianos-arm-none-eabi/** \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
