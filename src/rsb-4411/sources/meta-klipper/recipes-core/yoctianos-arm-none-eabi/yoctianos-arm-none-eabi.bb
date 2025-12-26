@@ -17,12 +17,12 @@ S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 do_install() {
     # ensure destination exists
-    install -d -m 0755 ${D}/opt
+    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
         install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
-        cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi/
+        cp -a ${S}/* ${D}/opt/yoctianos-arm-none-eabi
     else
         bbnote "ERROR: No extracted yoctianos-arm-none-eabi/ directory found in S (${S})"
         exit 1
@@ -52,7 +52,6 @@ FILES_${PN} = " \
 "
 
 # This is a prebuilt external toolchain, not a target package
-INHIBIT_DEFAULT_DEPS = "1"
 RDEPENDS_${PN} = ""
 RRECOMMENDS_${PN} = ""
 
