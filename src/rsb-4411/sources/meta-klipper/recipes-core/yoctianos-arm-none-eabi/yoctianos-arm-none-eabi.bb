@@ -56,4 +56,4 @@ EOF
 
 # Do NOT append ${PN} to PACKAGES (avoids duplicate-package QA error).
 # Explicitly include the toolchain directory and the profile script so files are shipped.
-FILES_${PN} = "/opt/yoctianos-arm-none-eabi /opt/yoctianos-arm-none-eabi/* /etc/profile.d/yoctianos-arm-none-eabi.sh"
+FILES:${PN} = "/opt/yoctianos-arm-none-eabi /opt/yoctianos-arm-none-eabi/* /etc/profile.d/yoctianos-arm-none-eabi.sh"
