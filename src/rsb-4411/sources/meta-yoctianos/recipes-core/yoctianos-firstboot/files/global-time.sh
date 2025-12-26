@@ -1,6 +1,8 @@
 #!/bin/sh
 
 CONF_TIMESYNCD="/etc/systemd/timesyncd.conf"
+DROPIN_DIR="/etc/systemd/timesyncd.conf.d"
+DROPIN_FILE="$DROPIN_DIR/ntp.conf"
 BACKUP_DIR="/var/backups/yoctianos-time"
 TMP="$(mktemp -d /tmp/yoctianos-time.XXXXXX)"
 
@@ -21,6 +23,7 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 mkdir -p "$BACKUP_DIR"
+mkdir -p "$DROPIN_DIR"
 
 # Helper trim
 _trim() {
@@ -91,7 +94,6 @@ toggle_ntp() {
         die "timedatectl not available; cannot toggle NTP."
     fi
     CURRENT="$(timedatectl show -p NTPSynchronized --value 2>/dev/null || true)"
-    # timedatectl set-ntp accepts true/false
     printf "Enable NTP synchronization? [Y/n] (current: %s): " "$CURRENT"
     read -r ans
     ans="$(_trim "$ans")"
@@ -104,63 +106,32 @@ toggle_ntp() {
     fi
 }
 
-# Edit NTP servers for systemd-timesyncd if present
+# Edit NTP servers by creating/updating a drop-in file (recommended)
 edit_ntp_servers() {
-    if [ ! -f "$CONF_TIMESYNCD" ]; then
-        echo "systemd-timesyncd config not found at $CONF_TIMESYNCD."
-        printf "Do you want to create it and configure NTP servers? [Y/n]: "
-        read -r c
-        c="$(_trim "$c")"
-        if [ -z "$c" ] || echo "$c" | grep -iq '^y'; then
-            touch "$CONF_TIMESYNCD"
-        else
-            echo "Skipping NTP server configuration."
-            return
-        fi
-    fi
-
-    backup_file "$CONF_TIMESYNCD"
-
-    # Show current NTP line if any
-    echo
-    echo "Current $CONF_TIMESYNCD content:"
-    echo "----------------------------------------"
-    sed -n '1,200p' "$CONF_TIMESYNCD" || true
-    echo "----------------------------------------"
-    echo
     printf "Enter NTP servers (space separated), or empty to cancel: "
     read -r SERVERS
     SERVERS="$(_trim "$SERVERS")"
     [ -z "$SERVERS" ] && { echo "Cancelled."; return; }
 
-    # Write new config preserving other settings
-    awk -v n="$SERVERS" '
-    BEGIN{in_time=0; wrote=0}
-    /^
+    # Backup existing drop-in if present
+    if [ -f "$DROPIN_FILE" ]; then
+        backup_file "$DROPIN_FILE"
+    fi
 
-\[Time\]
+    # Write drop-in file atomically
+    cat > "$TMP/ntp.conf" <<EOF
+[Time]
+NTP=$SERVERS
+EOF
 
-/{print; in_time=1; next}
-    /^
-
-\[/{ if(in_time && !wrote){ print "NTP=" n; wrote=1 } in_time=0; print; next}
-    { if(in_time){
-        if($0 ~ /^NTP=/){ if(!wrote){ print "NTP=" n; wrote=1 } ; next }
-        if($0 ~ /^FallbackNTP=/){ print; next }
-        # skip empty lines inside [Time] to avoid duplicates
-        if($0 ~ /^[[:space:]]*$/) next
-        print
-      } else print
-    }
-    END{ if(!wrote){ if(!in_time) print "[Time]"; print "NTP=" n } }' "$CONF_TIMESYNCD" > "$TMP/timesyncd.conf.new"
-
-    mv "$TMP/timesyncd.conf.new" "$CONF_TIMESYNCD"
-    chmod 0644 "$CONF_TIMESYNCD"
-    echo "Updated $CONF_TIMESYNCD with NTP=$SERVERS"
+    mv "$TMP/ntp.conf" "$DROPIN_FILE"
+    chmod 0644 "$DROPIN_FILE"
+    echo "Created/updated drop-in $DROPIN_FILE with NTP=$SERVERS"
 
     # Restart timesyncd if available
     if command -v systemctl >/dev/null 2>&1; then
         if systemctl list-unit-files | grep -q '^systemd-timesyncd'; then
+            systemctl daemon-reload || true
             systemctl restart systemd-timesyncd || echo "Warning: failed to restart systemd-timesyncd"
             echo "systemd-timesyncd restarted."
         fi
@@ -191,9 +162,16 @@ show_status() {
     fi
     if [ -f "$CONF_TIMESYNCD" ]; then
         echo
-        echo "Contents of $CONF_TIMESYNCD:"
+        echo "Contents of $CONF_TIMESYNCD (first 200 lines):"
         echo "----------------------------------------"
         sed -n '1,200p' "$CONF_TIMESYNCD" || true
+        echo "----------------------------------------"
+    fi
+    if [ -f "$DROPIN_FILE" ]; then
+        echo
+        echo "Contents of $DROPIN_FILE:"
+        echo "----------------------------------------"
+        sed -n '1,200p' "$DROPIN_FILE" || true
         echo "----------------------------------------"
     fi
 }
