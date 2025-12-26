@@ -1,6 +1,6 @@
 PN = "yoctianos-system"
 PV = "0.01"
-PR = "r0"
+PR = "r1"
 
 SUMMARY = "YoctianOS DEV files system package"
 LICENSE = "MIT"
@@ -13,6 +13,7 @@ SRC_URI = "file://os-release \
            file://LICENSE \
            file://profile \
            file://bash.bashrc \
+           file://apt/preferences.d/yoctianos.pref \
            file://skel/.bash_profile \
            file://skel/.bashrc"
 
@@ -32,6 +33,10 @@ do_install() {
     install -m 0644 ${WORKDIR}/profile ${D}${sysconfdir}/profile
     install -m 0644 ${WORKDIR}/bash.bashrc ${D}${sysconfdir}/bash.bashrc
 
+    # apt pref
+    install -d ${D}${sysconfdir}/apt/preferences.d
+    install -m 0644 ${WORKDIR}/apt/preferences.d/yoctianos.pref ${D}${sysconfdir}/apt/preferences.d/yoctianos.pref
+
     # skel for new users
     install -d ${D}${sysconfdir}/skel
     install -m 0644 ${WORKDIR}/skel/.bash_profile ${D}${sysconfdir}/skel/.bash_profile
@@ -46,6 +51,7 @@ FILES:${PN} += " \
     ${sysconfdir}/motd \
     ${sysconfdir}/profile \
     ${sysconfdir}/bash.bashrc \
+    ${sysconfdir}/apt/preferences.d/yoctianos.pref \
     ${sysconfdir}/skel/.bash_profile \
     ${sysconfdir}/skel/.bashrc \
 "

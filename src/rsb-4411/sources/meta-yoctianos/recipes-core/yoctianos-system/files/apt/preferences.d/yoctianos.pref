@@ -1,0 +1,27 @@
+Package: *
+Pin: origin *.*.*.*
+Pin-Priority: 900
+
+Package: *
+Pin: origin *:*:*::*
+Pin-Priority: 900
+
+Package: *
+Pin: origin *:*:*:*::*
+Pin-Priority: 900
+
+Package: *
+Pin: origin *:*:*:*:*:*:*:*
+Pin-Priority: 900
+
+Package: *
+Pin: origin *.local
+Pin-Priority: 900
+
+Package: *
+Pin: origin *
+Pin-Priority: 700
+
+Package: *
+Pin: origin *rpmdeb.com*
+Pin-Priority: 500
