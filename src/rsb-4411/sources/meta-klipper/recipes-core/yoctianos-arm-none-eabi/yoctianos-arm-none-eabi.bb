@@ -15,8 +15,6 @@ SRC_URI[sha256sum] = "6fc0303a1b09300777611ba9567340f4669a4b21c7e8e036fc77e2861c
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
-inherit allarch
-
 # Prebuilt external toolchain settings
 INHIBIT_DEFAULT_DEPS = "1"
 RDEPENDS_${PN} = ""
