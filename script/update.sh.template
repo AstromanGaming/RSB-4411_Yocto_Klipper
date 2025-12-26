@@ -2,6 +2,15 @@
 
 git pull
 
+echo
+printf "Update the memory.conf? [y/N]: "
+read -r MEMORY
+if [ "${MEMORY,,}" = "y" ]; then
+    rm .././memory.conf
+else
+    echo "Skipping..."
+fi
+
 .././launcher.sh
 
 screen -X -S yoctianos quit
