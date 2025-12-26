@@ -1,22 +1,22 @@
 Package: *
 Pin: origin *.*.*.*
-Pin-Priority: 900
+Pin-Priority: 800
 
 Package: *
 Pin: origin *:*:*::*
-Pin-Priority: 900
+Pin-Priority: 800
 
 Package: *
 Pin: origin *:*:*:*::*
-Pin-Priority: 900
+Pin-Priority: 800
 
 Package: *
 Pin: origin *:*:*:*:*:*:*:*
-Pin-Priority: 900
+Pin-Priority: 800
 
 Package: *
 Pin: origin *.local
-Pin-Priority: 900
+Pin-Priority: 800
 
 Package: *
 Pin: origin *
