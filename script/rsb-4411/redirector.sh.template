@@ -13,39 +13,153 @@ CORE_IMAGE="imx-image-core"
 MULTIMEDIA_IMAGE="imx-image-multimedia"
 FULL_IMAGE="imx-image-full"
 
+# Memory file (default to the path you gave)
+MEMORY_FILE="${HOME}/YoctianOS-Distro/src/rsb-4411/memory.conf"
+
+# Initialize variables if not set
+MEMORY_REQUIRED="${MEMORY_REQUIRED:-}"
+MEMORY_RECOMMENDED="${MEMORY_RECOMMENDED:-}"
+MEMORY_OPTIONAL="${MEMORY_OPTIONAL:-}"
+
 # Load saved memory packages if exists
-MEMORY_FILE="memory.conf"
 if [ -f "$MEMORY_FILE" ]; then
     . "$MEMORY_FILE"
 fi
 
-# Function to run bitbake with memory packages
-run_bitbake_with_memory() {
-    if [ -z "$MEMORY_PACKAGES" ]; then
-        echo "No memory packages defined. Please configure them first."
-        return
-    fi
-    echo "Running bitbake with memory packages: $MEMORY_PACKAGES"
-    bitbake $MEMORY_PACKAGES
+# Save memory variables to file
+save_memory_file() {
+    cat > "$MEMORY_FILE" <<EOF
+# Memory package lists (auto-saved)
+MEMORY_REQUIRED="${MEMORY_REQUIRED}"
+MEMORY_RECOMMENDED="${MEMORY_RECOMMENDED}"
+MEMORY_OPTIONAL="${MEMORY_OPTIONAL}"
+EOF
+    echo "Saved memory configuration to $MEMORY_FILE"
 }
 
-# Submenu to set memory packages
-set_memory_menu() {
-    echo "Memory packages submenu:"
-    echo "1) Set package list (current: ${MEMORY_PACKAGES:-none})"
-    echo "2) Back to main menu"
+# Build bitbake with selected categories
+run_bitbake_with_memory() {
+    mode="$1" # "required" | "recommended" | "all"
+    # Build the package list according to mode
+    pkg_list=""
 
-    read -p "Enter choice [1-2]: " memchoice
-    case $memchoice in
+    case "$mode" in
+        required)
+            pkg_list="$MEMORY_REQUIRED"
+            ;;
+        recommended)
+            # required + recommended
+            pkg_list="$MEMORY_REQUIRED $MEMORY_RECOMMENDED"
+            ;;
+        all)
+            # required + recommended + optional
+            pkg_list="$MEMORY_REQUIRED $MEMORY_RECOMMENDED $MEMORY_OPTIONAL"
+            ;;
+        *)
+            echo "Unknown mode: $mode"
+            return 1
+            ;;
+    esac
+
+    # Trim leading/trailing spaces (portable)
+    pkg_list=$(echo "$pkg_list" | awk '{$1=$1;print}')
+
+    if [ -z "$pkg_list" ]; then
+        echo "No packages selected for mode '$mode'. Configure memory packages first."
+        return 1
+    fi
+
+    echo "Running bitbake for packages ($mode): $pkg_list"
+    # Run bitbake for each package (preserve word splitting)
+    for pkg in $pkg_list; do
+        echo "bitbake $pkg"
+        bitbake "$pkg"
+    done
+}
+
+# Submenu to edit a single category
+edit_category() {
+    cat_name="$1" # REQUIRED | RECOMMENDED | OPTIONAL
+    var_name="MEMORY_${cat_name}"
+    current_val=$(eval "printf '%s' \"\${$var_name}\"")
+    echo "${cat_name} packages (current: ${current_val:-none})"
+    echo "1) Set list (space-separated package names)"
+    echo "2) Append packages (space-separated)"
+    echo "3) Clear list"
+    echo "4) Back"
+    read -p "Enter choice [1-4]: " c
+    case "$c" in
         1)
             read -p "Enter package names (space-separated): " newpkgs
-            MEMORY_PACKAGES="$newpkgs"
-            echo "MEMORY_PACKAGES=\"$MEMORY_PACKAGES\"" > "$MEMORY_FILE"
-            echo "Saved memory packages for future runs."
+            eval "$var_name=\"\$newpkgs\""
+            save_memory_file
             ;;
         2)
+            read -p "Enter package names to append (space-separated): " addpkgs
+            if [ -z "$addpkgs" ]; then
+                echo "No packages entered."
+            else
+                # Append while avoiding duplicate spaces
+                eval "$var_name=\"\${$var_name} \$addpkgs\""
+                # Normalize spaces
+                eval "$var_name=\"\$(echo \\\"\${$var_name}\\\" | awk '{\$1=\$1;print}')\""
+                save_memory_file
+            fi
+            ;;
+        3)
+            eval "$var_name=\"\""
+            save_memory_file
+            ;;
+        4)
             return
             ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+# Submenu to configure memory packages (three categories)
+set_memory_menu() {
+    while true; do
+        echo "Memory packages configuration:"
+        echo "1) Edit REQUIRED (current: ${MEMORY_REQUIRED:-none})"
+        echo "2) Edit RECOMMENDED (current: ${MEMORY_RECOMMENDED:-none})"
+        echo "3) Edit OPTIONAL (current: ${MEMORY_OPTIONAL:-none})"
+        echo "4) Show current configuration"
+        echo "5) Back to main menu"
+        read -p "Enter choice [1-5]: " memchoice
+        case $memchoice in
+            1) edit_category "REQUIRED" ;;
+            2) edit_category "RECOMMENDED" ;;
+            3) edit_category "OPTIONAL" ;;
+            4)
+                echo "Current memory configuration:"
+                echo "  REQUIRED:    ${MEMORY_REQUIRED:-<none>}"
+                echo "  RECOMMENDED: ${MEMORY_RECOMMENDED:-<none>}"
+                echo "  OPTIONAL:    ${MEMORY_OPTIONAL:-<none>}"
+                ;;
+            5) return ;;
+            *)
+                echo "Invalid choice."
+                ;;
+        esac
+    done
+}
+
+# Submenu to choose which categories to build
+build_memory_menu() {
+    echo "Build memory packages:"
+    echo "1) Required only"
+    echo "2) Required + Recommended"
+    echo "3) All (Required + Recommended + Optional)"
+    echo "4) Back to main menu"
+    read -p "Enter choice [1-4]: " bchoice
+    case $bchoice in
+        1) run_bitbake_with_memory required ;;
+        2) run_bitbake_with_memory recommended ;;
+        3) run_bitbake_with_memory all ;;
+        4) return ;;
         *)
             echo "Invalid choice."
             ;;
@@ -57,7 +171,7 @@ while true; do
     echo "Main Menu:"
     echo "1) Build images"
     echo "2) Build memory packages"
-    echo "3) Configure memory packages (submenu)"
+    echo "3) Configure memory packages"
     echo "4) Exit"
 
     read -p "Enter choice [1-4]: " choice
@@ -71,23 +185,17 @@ while true; do
             echo "e) Complete ($CORE_IMAGE + $MULTIMEDIA_IMAGE + $FULL_IMAGE)"
             read -p "Enter choice [a-e]: " subchoice
             case $subchoice in
-                a)
-                    bitbake $CORE_IMAGE
-                    ;;
-                b)
-                    bitbake $MULTIMEDIA_IMAGE
-                    ;;
-                c)
-                    bitbake $FULL_IMAGE
-                    ;;
+                a) bitbake "$CORE_IMAGE" ;;
+                b) bitbake "$MULTIMEDIA_IMAGE" ;;
+                c) bitbake "$FULL_IMAGE" ;;
                 d)
-                    bitbake $CORE_IMAGE
-                    bitbake $MULTIMEDIA_IMAGE
+                    bitbake "$CORE_IMAGE"
+                    bitbake "$MULTIMEDIA_IMAGE"
                     ;;
                 e)
-                    bitbake $CORE_IMAGE
-                    bitbake $MULTIMEDIA_IMAGE
-                    bitbake $FULL_IMAGE
+                    bitbake "$CORE_IMAGE"
+                    bitbake "$MULTIMEDIA_IMAGE"
+                    bitbake "$FULL_IMAGE"
                     ;;
                 *)
                     echo "Invalid choice."
@@ -95,7 +203,7 @@ while true; do
             esac
             ;;
         2)
-            run_bitbake_with_memory
+            build_memory_menu
             ;;
         3)
             set_memory_menu
