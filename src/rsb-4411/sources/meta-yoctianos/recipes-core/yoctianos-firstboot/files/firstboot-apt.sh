@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-export PRIVATE=false
+export UPDATE=false
 
 # This script must be run as root user.
 if [ "$(id -u)" -ne 0 ]; then
