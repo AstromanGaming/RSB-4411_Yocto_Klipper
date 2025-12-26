@@ -56,7 +56,7 @@ ensure_git_identity() {
 
 # Update and install packages
 sudo apt update
-sudo apt install -y git curl screen
+sudo apt install -y git curl screen gcc-multilib g++-multilib libc6-dev-i386
 
 # Check or set Git identity
 ensure_git_identity
