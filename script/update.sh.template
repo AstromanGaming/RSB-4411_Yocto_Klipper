@@ -1,16 +1,40 @@
 #!/bin/sh
+set -eu
 
-git pull
-
-echo
-printf "Update the memory.conf? [y/N]: "
-read -r MEMORY
-if [ "${MEMORY,,}" = "y" ]; then
-    rm .././memory.conf
-else
-    echo "Skipping..."
+# Update repository
+if ! git pull; then
+  echo "git pull failed" >&2
+  exit 1
 fi
 
-.././launcher.sh
+# Prompt user about memory.conf
+printf "\nUpdate the memory.conf? [y/N]: "
+read -r MEMORY
+MEMORY_LOWER=$(printf '%s' "$MEMORY" | tr '[:upper:]' '[:lower:]')
 
-screen -X -S yoctianos quit
+if [ "$MEMORY_LOWER" = "y" ] || [ "$MEMORY_LOWER" = "yes" ]; then
+  if [ -f ../memory.conf ]; then
+    rm -- ../memory.conf && echo "Removed ../memory.conf"
+  else
+    echo "No ../memory.conf found, nothing to remove"
+  fi
+else
+  echo "Skipping..."
+fi
+
+# Run launcher.sh (try local then parent directory)
+if [ -x ./launcher.sh ]; then
+  ./launcher.sh
+elif [ -x ../launcher.sh ]; then
+  ../launcher.sh
+else
+  echo "launcher.sh not found or not executable" >&2
+fi
+
+# Quit screen session if it exists
+SESSION="yoctianos"
+if screen -ls | grep -q "$SESSION"; then
+  screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
+else
+  echo "Screen session $SESSION not running"
+fi
