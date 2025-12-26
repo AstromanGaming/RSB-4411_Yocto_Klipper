@@ -12,12 +12,12 @@ SRC_URI = " \
 "
 SRC_URI[sha256sum] = "6fc0303a1b09300777611ba9567340f4669a4b21c7e8e036fc77e2861cf3f8e7"
 
-# If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi,
+# If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
 
 inherit allarch
 
-# This is a prebuilt external toolchain, not a target package
+# Prebuilt external toolchain settings
 INHIBIT_DEFAULT_DEPS = "1"
 RDEPENDS_${PN} = ""
 RRECOMMENDS_${PN} = ""
@@ -54,10 +54,6 @@ EOF
     fi
 }
 
-# Explicitly include files under the toolchain directory so QA sees them as shipped.
-# Use globs to match files (Yocto packages file contents, not empty directories).
-FILES_${PN} = " \
-    /opt/yoctianos-arm-none-eabi/* \
-    /opt/yoctianos-arm-none-eabi/** \
-    /etc/profile.d/yoctianos-arm-none-eabi.sh \
-"
+# Do NOT append ${PN} to PACKAGES (avoids duplicate-package QA error).
+# Explicitly include the toolchain directory and the profile script so files are shipped.
+FILES_${PN} = "/opt/yoctianos-arm-none-eabi /opt/yoctianos-arm-none-eabi/* /etc/profile.d/yoctianos-arm-none-eabi.sh"
