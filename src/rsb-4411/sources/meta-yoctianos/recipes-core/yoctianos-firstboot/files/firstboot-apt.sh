@@ -3,7 +3,7 @@
 export UPDATE=false
 
 # This script must be run as root user.
-if [ "$(whoami)" = "root" ]; then
+if [ "$(whoami)" != "root" ]; then
     echo "ERROR: This script must be run as root user. Aborting."
     exit 1
 fi

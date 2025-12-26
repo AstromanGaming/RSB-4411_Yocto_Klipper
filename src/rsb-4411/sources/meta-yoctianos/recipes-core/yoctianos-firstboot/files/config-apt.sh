@@ -34,7 +34,7 @@ die() {
 }
 
 # Must be root user
-if [ "$(whoami)" = "root" ]; then
+if [ "$(whoami)" != "root" ]; then
     die "This script must be run as root user."
 fi
 
