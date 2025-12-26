@@ -47,9 +47,15 @@ EOF
 
 
 FILES_${PN} = " \
+    /opt \
     /opt/yoctianos-arm-none-eabi \
     /etc/profile.d/yoctianos-arm-none-eabi.sh \
 "
+
+# This is a prebuilt external toolchain, not a target package
+INHIBIT_DEFAULT_DEPS = "1"
+RDEPENDS_${PN} = ""
+RRECOMMENDS_${PN} = ""
 
 # Skip QA checks that do not apply to external toolchains
 INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
