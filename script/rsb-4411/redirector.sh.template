@@ -37,7 +37,7 @@ EOF
     echo "Saved memory configuration to $MEMORY_FILE"
 }
 
-# Build bitbake with selected categories
+# Build bitbake with selected categories (grouped invocation)
 run_bitbake_with_memory() {
     mode="$1" # "required" | "recommended" | "all"
     # Build the package list according to mode
@@ -61,7 +61,7 @@ run_bitbake_with_memory() {
             ;;
     esac
 
-    # Trim leading/trailing spaces (portable)
+    # Trim leading/trailing and normalize spaces (portable)
     pkg_list=$(echo "$pkg_list" | awk '{$1=$1;print}')
 
     if [ -z "$pkg_list" ]; then
@@ -69,12 +69,25 @@ run_bitbake_with_memory() {
         return 1
     fi
 
-    echo "Running bitbake for packages ($mode): $pkg_list"
-    # Run bitbake for each package (preserve word splitting)
-    for pkg in $pkg_list; do
-        echo "bitbake $pkg"
-        bitbake "$pkg"
-    done
+    echo "Running bitbake once for packages ($mode): $pkg_list"
+
+    # Split pkg_list into positional parameters safely and call bitbake once
+    # Save old positional parameters
+    old_pos="$@"
+    set -- $pkg_list
+    # If there are no positional params for some reason, abort
+    if [ "$#" -eq 0 ]; then
+        echo "No packages to build after splitting list."
+        # restore old positional params (not strictly necessary here)
+        set -- $old_pos
+        return 1
+    fi
+
+    # Call bitbake with all packages at once
+    bitbake "$@"
+
+    # restore old positional params (best-effort)
+    set -- $old_pos
 }
 
 # Submenu to edit a single category
