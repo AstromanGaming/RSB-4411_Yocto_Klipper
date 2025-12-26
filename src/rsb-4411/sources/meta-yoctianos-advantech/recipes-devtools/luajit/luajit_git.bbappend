@@ -1,1 +1,1 @@
-DEPENDS += " linux-libc-headers glibc"
+DEPENDS += " linux-libc-headers glibc virtual/kernel-dev"
