@@ -1,1 +1,2 @@
-DEPENDS += " linux-libc-headers glibc virtual/kernel"
+DEPENDS += " linux-libc-headers glibc"
+inherit autotools
