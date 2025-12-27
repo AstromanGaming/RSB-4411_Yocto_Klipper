@@ -5,12 +5,12 @@ LIC_FILES_CHKSUM = "file://share/licenses/yoctianos/LICENSE;md5=c9c87ca016344f2a
 
 PN = "yoctianos-arm-none-eabi"
 PV = "0.02"
-PR = "r2"
+PR = "r3"
 
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.02/yoctianos-arm-none-eabi.tar.xz \
 "
-SRC_URI[sha256sum] = "16ba049425f80d0742689e5674866d28a71d0a9576d1f59373cf8b1d5f634dab"
+SRC_URI[sha256sum] = "eede5393309ec185eaa182ca1ab39b70b2625c8c9cd070d3c1af38f65fe8eb88"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
