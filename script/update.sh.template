@@ -32,5 +32,5 @@ else
 fi
 
 # Quit screen session if it exists
-SESSION="yoctianos"
+SESSION="*.yoctianos"
 screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
