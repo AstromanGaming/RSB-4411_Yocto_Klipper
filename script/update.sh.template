@@ -32,5 +32,9 @@ else
 fi
 
 # Quit screen session if it exists
-SESSION="*.yoctianos"
-screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
+SESSION="yoctianos"
+if screen -ls | grep -q "$SESSION"; then
+  screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
+else
+  echo "Screen session $SESSION not running"
+fi

@@ -21,8 +21,12 @@ fi
 echo "Ubuntu 22.04.X LTS detected."
 
 # Update and install packages
+if [ "$YOCTIANOS_DEV_NUM" != "1" ]; then
 sudo apt update
 sudo apt install -y gcc-multilib g++-multilib libc6-dev-i386
+fi
+
+export YOCTIANOS_DEV_NUM="1"
 
 # Set working directory to RSB-4411
 cd ~/YoctianOS-Distro/script/rsb-4411 || {
