@@ -2,6 +2,30 @@
 
 set -e
 
+if [ "$(id -u)" -eq 0 ]; then
+    echo "ERROR: Do not run this script as root."
+    exit 1
+fi
+
+if ! command -v lsb_release >/dev/null 2>&1; then
+    echo "ERROR: lsb_release command not found. Install 'lsb-release'."
+    exit 1
+fi
+
+UBU_VERSION=$(lsb_release -rs)
+
+if [ "$UBU_VERSION" != "22.04" ]; then
+    echo "ERROR: This script must be run on Ubuntu 22.04.X LTS."
+    echo "Detected version: $UBU_VERSION"
+    exit 1
+fi
+
+echo "Ubuntu 22.04.X LTS detected."
+
+# Update and install packages
+sudo apt update
+sudo apt install -y git curl screen
+
 # Function to check and optionally modify global Git identity
 ensure_git_identity() {
   local current_name current_email
@@ -53,10 +77,6 @@ ensure_git_identity() {
     echo "Global Git configuration set."
   fi
 }
-
-# Update and install packages
-sudo apt update
-sudo apt install -y git curl screen gcc-multilib g++-multilib libc6-dev-i386
 
 # Check or set Git identity
 ensure_git_identity

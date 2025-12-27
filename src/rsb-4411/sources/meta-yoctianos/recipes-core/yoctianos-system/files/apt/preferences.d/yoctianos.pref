@@ -21,7 +21,3 @@ Pin-Priority: 800
 Package: *
 Pin: origin *
 Pin-Priority: 700
-
-Package: *
-Pin: origin *rpmdeb.com*
-Pin-Priority: 500

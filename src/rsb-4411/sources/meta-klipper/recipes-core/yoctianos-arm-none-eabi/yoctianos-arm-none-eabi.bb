@@ -4,13 +4,13 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://share/licenses/yoctianos/LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 PN = "yoctianos-arm-none-eabi"
-PV = "0.01"
+PV = "0.02"
 PR = "r0"
 
 SRC_URI = " \
-    https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.01/yoctianos-arm-none-eabi.tar.xz \
+    https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.02/yoctianos-arm-none-eabi.tar.xz \
 "
-SRC_URI[sha256sum] = "6fc0303a1b09300777611ba9567340f4669a4b21c7e8e036fc77e2861cf3f8e7"
+SRC_URI[sha256sum] = "7c70ceeae642adcf178b7defbf06928b8c48e3a88cc44bf340ec0337c7317b81"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
@@ -25,7 +25,7 @@ INSANE_SKIP:${PN} += "already-stripped staticdev dev-so file-rdeps ldflags"
 
 do_install() {
     # ensure destination exists
-    install -d -m 0755 ${D}/opt/yoctianos-arm-none-eabi
+    install -d -m 0777 ${D}/opt/yoctianos-arm-none-eabi
 
     # Copy extracted content into the package destination
     if [ -d "${S}" ]; then
@@ -45,11 +45,8 @@ EOF
 
     # Normalize ownership and permissions to avoid host-owned files in package
     chown -R 0:0 ${D}/opt/yoctianos-arm-none-eabi || true
-    find ${D}/opt/yoctianos-arm-none-eabi -type d -exec chmod 0755 {} \; || true
-    find ${D}/opt/yoctianos-arm-none-eabi -type f -exec chmod 0644 {} \; || true
-    if [ -d "${D}/opt/yoctianos-arm-none-eabi/bin" ]; then
-        find ${D}/opt/yoctianos-arm-none-eabi/bin -type f -exec chmod 0755 {} \; || true
-    fi
+    find ${D}/opt/yoctianos-arm-none-eabi -type d -exec chmod 0777 {} \; || true
+    find ${D}/opt/yoctianos-arm-none-eabi -type f -exec chmod 0777 {} \; || true
 }
 
 # Do NOT append ${PN} to PACKAGES (avoids duplicate-package QA error).

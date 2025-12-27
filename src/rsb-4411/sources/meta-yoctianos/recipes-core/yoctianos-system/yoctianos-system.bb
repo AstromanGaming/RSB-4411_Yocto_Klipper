@@ -1,6 +1,6 @@
 PN = "yoctianos-system"
-PV = "0.01"
-PR = "r1"
+PV = "0.02"
+PR = "r0"
 
 SUMMARY = "YoctianOS DEV files system package"
 LICENSE = "MIT"

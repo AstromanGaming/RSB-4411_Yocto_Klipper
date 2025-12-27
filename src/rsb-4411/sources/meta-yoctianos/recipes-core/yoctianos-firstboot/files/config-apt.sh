@@ -194,19 +194,19 @@ case "$ACTION" in
             done; IFS="$OLDIFS"
         done
 
-	PUBLIC_STATUS="$(get_public_status)"
+	#PUBLIC_STATUS="$(get_public_status)"
 
-        if [ "$PUBLIC_STATUS" = "false" ]; then
-		printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
-		read -r PUBLICREPO
-		PUBLICREPO="$(_trim "$PUBLICREPO")"
-		if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
-	  	  curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
-  		  echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
-		else
-   		  echo "Skipping default online APT repo configuration."
-                fi
-	fi
+        #if [ "$PUBLIC_STATUS" = "false" ]; then
+	#	printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
+	#	read -r PUBLICREPO
+	#	PUBLICREPO="$(_trim "$PUBLICREPO")"
+	#	if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
+	#  	  curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
+  	#	  echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
+	#	else
+   	#	  echo "Skipping default online APT repo configuration."
+        #        fi
+	#fi
         ;;
 esac
 

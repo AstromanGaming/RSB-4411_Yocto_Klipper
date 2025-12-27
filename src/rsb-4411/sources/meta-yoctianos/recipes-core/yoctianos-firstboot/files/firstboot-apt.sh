@@ -135,17 +135,17 @@ else
     echo "Skipping Mirror and/or Local APT repo configuration."
 fi
 
-echo
-printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
-read -r PUBLICREPO
-if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
-    curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
-    echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
-    set_public_flag
-    export UPDATE=true
-else
-    echo "Skipping default online APT repo configuration."
-fi
+#echo
+#printf "Adding the default online APT repository. Add the repo now? [Y/n]: "
+#read -r PUBLICREPO
+#if [ -z "$PUBLICREPO" ] || echo "$PUBLICREPO" | grep -iq '^y'; then
+#    curl -L https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/pub.gpg.key | sudo apt-key add -
+#    echo "deb https://deb.rpmdeb.com/YoctianOS/DEV/RSB-4411/public/ stable main" > /etc/apt/sources.list.d/dev-rsb-4411-public.list
+#    set_public_flag
+#    export UPDATE=true
+#else
+#    echo "Skipping default online APT repo configuration."
+#fi
 
 if [ -z "$UPDATE" ] || echo "$UPDATE" | grep -iq 'true'; then
     echo "Update all APT repesitories..."

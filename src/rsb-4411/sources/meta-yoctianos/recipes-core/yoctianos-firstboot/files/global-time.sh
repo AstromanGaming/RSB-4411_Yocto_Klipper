@@ -106,7 +106,7 @@ toggle_ntp() {
     fi
 }
 
-# Edit NTP servers by creating/updating a drop-in file (recommended)
+# Edit NTP servers by creating/updating a drop-in file
 edit_ntp_servers() {
     printf "Enter NTP servers (space separated), or empty to cancel: "
     read -r SERVERS

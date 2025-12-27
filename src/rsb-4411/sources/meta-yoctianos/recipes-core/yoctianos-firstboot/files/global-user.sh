@@ -15,7 +15,6 @@ find_existing_user() {
 }
 
 # Grant sudo: ensure user can use sudo (defensive, safe)
-# This version installs a sudoers file without visudo validation (per request).
 grant_sudo_for_user() {
     u="$1"
     if [ -z "$u" ]; then

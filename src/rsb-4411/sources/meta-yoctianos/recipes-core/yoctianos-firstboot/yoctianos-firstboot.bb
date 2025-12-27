@@ -1,6 +1,6 @@
 PN = "yoctianos-firstboot"
-PV = "0.01"
-PR = "r4"
+PV = "0.02"
+PR = "r0"
 
 SUMMARY = "YoctianOS DEV preparation (first boot) setup and configuration setup package"
 LICENSE = "MIT"

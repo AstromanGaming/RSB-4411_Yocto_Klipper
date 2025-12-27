@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(id -u)" -eq 0 ]; then
+    echo "ERROR: Do not run this script as root."
+    exit 1
+fi
+
 # Prompt for build directory name (no default allowed)
 read -p "Enter build sub-directory name [build_X]: " BUILD_DIR
 
