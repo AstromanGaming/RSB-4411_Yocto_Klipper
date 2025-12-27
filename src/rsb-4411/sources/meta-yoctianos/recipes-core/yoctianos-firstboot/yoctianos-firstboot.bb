@@ -1,6 +1,6 @@
 PN = "yoctianos-firstboot"
 PV = "0.02"
-PR = "r0"
+PR = "r1"
 
 SUMMARY = "YoctianOS DEV preparation (first boot) setup and configuration setup package"
 LICENSE = "MIT"
@@ -12,7 +12,7 @@ SRC_URI = "file://yoctianos-setup.sh \
            file://firstboot-apt.sh \
            file://config-apt.sh \
            file://yoctianos-first-login.sh \
-           file://.yoctianos \
+           file://.yoctianos.template \
            file://LICENSE"
 
 S = "${WORKDIR}"
@@ -38,7 +38,7 @@ do_install() {
 
     # install system conf
     install -d ${D}${sysconfdir}
-    install -m 0644 ${WORKDIR}/.yoctianos ${D}${sysconfdir}/.yoctianos
+    install -m 0644 ${WORKDIR}/.yoctianos.template ${D}${sysconfdir}/.yoctianos.template
 }
 
 FILES:${PN} += "/home/root/yoctianos-setup.sh \
@@ -48,7 +48,7 @@ FILES:${PN} += "/home/root/yoctianos-setup.sh \
         /usr/local/sbin/yoctianos/firstboot-apt.sh \
         /usr/local/sbin/yoctianos/config-apt.sh \
         ${sysconfdir}/profile.d/yoctianos-first-login.sh \
-        ${sysconfdir}/.yoctianos"
+        ${sysconfdir}/.yoctianos.template"
 
 # Enable sshd at image creation if the sshd unit exists in the rootfs
 do_install:append() {
