@@ -22,6 +22,14 @@ else
   echo "Skipping..."
 fi
 
+# Quit screen session if it exists
+SESSION="yoctianos"
+if screen -ls | grep -q "$SESSION"; then
+  screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
+else
+  echo "Screen session $SESSION not running"
+fi
+
 # Run launcher.sh (try local then parent directory)
 if [ -x ./launcher.sh ]; then
   ./launcher.sh
@@ -29,12 +37,4 @@ elif [ -x ../launcher.sh ]; then
   ../launcher.sh
 else
   echo "launcher.sh not found or not executable" >&2
-fi
-
-# Quit screen session if it exists
-SESSION="yoctianos"
-if screen -ls | grep -q "$SESSION"; then
-  screen -S "$SESSION" -X quit && echo "Screen session $SESSION quit"
-else
-  echo "Screen session $SESSION not running"
 fi
