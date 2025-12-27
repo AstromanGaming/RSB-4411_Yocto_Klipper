@@ -1,16 +1,16 @@
-SUMMARY = "Klipper Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
-DESCRIPTION = "Klipper Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
+SUMMARY = "Klipper-Conpatible Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
+DESCRIPTION = "Klipper-Conpatible Standalone ARM bare-metal toolchain (gcc, binutils, newlib) for YoctianOS DEV ARM hosts"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://share/licenses/yoctianos/LICENSE;md5=c9c87ca016344f2a98c6b0802912f8ee"
 
 PN = "yoctianos-arm-none-eabi"
 PV = "0.02"
-PR = "r1"
+PR = "r2"
 
 SRC_URI = " \
     https://github.com/YoctianOS/yoctianos-arm-none-eabi/releases/download/0.02/yoctianos-arm-none-eabi.tar.xz \
 "
-SRC_URI[sha256sum] = "c46ffb9927961f8790262608b280da201d9d7aa7670c30f226302cab85054b3c"
+SRC_URI[sha256sum] = "16ba049425f80d0742689e5674866d28a71d0a9576d1f59373cf8b1d5f634dab"
 
 # If the tarball extracts into a top-level directory named yoctianos-arm-none-eabi
 S = "${WORKDIR}/yoctianos-arm-none-eabi"
